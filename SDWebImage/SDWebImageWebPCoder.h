@@ -1,16 +1,17 @@
 /*
  * This file is part of the SDWebImage package.
  * (c) Olivier Poitrey <rs@dailymotion.com>
- * (c) james <https://github.com/mystcolor>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
+#ifdef SD_WEBP
+
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
-@interface SDWebImageDecoder : NSObject
+@interface SDWebImageWebPCoder : NSObject <SDWebImageCoder>
 
 + (nonnull instancetype)sharedCoder;
 - (nullable UIImage *)decodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format;
@@ -18,3 +19,5 @@
 - (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format;
 
 @end
+
+#endif

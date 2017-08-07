@@ -8,9 +8,8 @@
 
 #import "SDWebImageDownloaderOperation.h"
 #import "SDWebImageDecoder.h"
-#import "UIImage+MultiFormat.h"
 #import "SDWebImageManager.h"
-#import "NSImage+WebCache.h"
+#import "UIImage+ForceDecode.h"
 
 NSString *const SDWebImageDownloadStartNotification = @"SDWebImageDownloadStartNotification";
 NSString *const SDWebImageDownloadReceiveResponseNotification = @"SDWebImageDownloadReceiveResponseNotification";
@@ -31,8 +30,6 @@ typedef NSMutableDictionary<NSString *, id> SDCallbacksDictionary;
 @property (assign, nonatomic, getter = isExecuting) BOOL executing;
 @property (assign, nonatomic, getter = isFinished) BOOL finished;
 @property (strong, nonatomic, nullable) NSMutableData *imageData;
-@property (copy, nonatomic, nullable) NSString *MIMEType;
-@property (strong, nonatomic, nullable) SDWebImageDecoder *decoder;
 
 // This is weak because it is injected by whoever manages this session. If this gets nil-ed out, we won't be able to run
 // the task associated with this operation
@@ -290,8 +287,6 @@ didReceiveResponse:(NSURLResponse *)response
         [self done];
     }
     
-    self.MIMEType = response.MIMEType;
-    
     if (completionHandler) {
         completionHandler(NSURLSessionResponseAllow);
     }
@@ -302,20 +297,16 @@ didReceiveResponse:(NSURLResponse *)response
 
     if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0) {
         UIImage *image;
-        if (!self.decoder) {
-#ifdef SD_WEBP
-            if ([self.MIMEType isEqualToString:kWebPMIMEType]) {
-                self.decoder = [[SDWebImageDecoder alloc] initWithType:SDWebImageDecoderTypeWebP];
-            } else {
-#endif
-                self.decoder = [[SDWebImageDecoder alloc] initWithType:SDWebImageDecoderTypeImageIO];
-#ifdef SD_WEBP
-            }
-#endif
-        }
-        const NSInteger totalSize = self.imageData.length;
+        NSData *imageData = [self.imageData copy];
+        SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
+        const NSInteger totalSize = imageData.length;
         BOOL finished = (self.expectedSize == totalSize);
-        image = [self.decoder incrementalDecodedImageWithUpdateData:self.imageData finished:finished];
+        if ([self.internalImageCoder respondsToSelector:@selector(incrementalDecodedImageWithData:format:finished:)]) {
+            image = [self.internalImageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
+        } else {
+            self.internalImageCoder = [[SDWebImageDecoder alloc] init];
+            image = [self.internalImageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
+        }
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
             UIImage *scaledImage = SDScaledImageForKey(key, image);
@@ -376,7 +367,15 @@ didReceiveResponse:(NSURLResponse *)response
              *  So we don't need to check the cache option here, since the system will obey the cache option
              */
             if (self.imageData) {
-                UIImage *image = [UIImage sd_imageWithData:self.imageData];
+                UIImage *image;
+                NSData *imageData = [self.imageData copy];
+                SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
+                if ([self.internalImageCoder respondsToSelector:@selector(decodedImageWithData:format:)]) {
+                    image = [self.internalImageCoder decodedImageWithData:imageData format:format];
+                } else {
+                    self.internalImageCoder = [SDWebImageDecoder sharedCoder];
+                    [self.internalImageCoder decodedImageWithData:imageData format:format];
+                }
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
                 image = SDScaledImageForKey(key, image);
                 

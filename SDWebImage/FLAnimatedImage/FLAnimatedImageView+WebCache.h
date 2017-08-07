@@ -10,8 +10,8 @@
 
 #if SD_UIKIT
 
-#if __has_include(<FLAnimatedImage/FLAnimatedImage.h>)
-#import <FLAnimatedImage/FLAnimatedImage.h>
+#if __has_include(<FLAnimatedImage/FLAnimatedImageView.h>)
+#import <FLAnimatedImage/FLAnimatedImageView.h>
 #else
 #import "FLAnimatedImageView.h"
 #endif

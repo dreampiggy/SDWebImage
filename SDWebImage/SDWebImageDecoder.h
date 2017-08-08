@@ -9,6 +9,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
+#import "UIImage+ForceDecode.h"
 
 @interface SDWebImageDecoder : NSObject <SDWebImageCoder>
 

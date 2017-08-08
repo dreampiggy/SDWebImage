@@ -9,7 +9,7 @@
 #import "SDWebImageDownloaderOperation.h"
 #import "SDWebImageDecoder.h"
 #import "SDWebImageManager.h"
-#import "UIImage+ForceDecode.h"
+#import "NSImage+WebCache.h"
 
 NSString *const SDWebImageDownloadStartNotification = @"SDWebImageDownloadStartNotification";
 NSString *const SDWebImageDownloadReceiveResponseNotification = @"SDWebImageDownloadReceiveResponseNotification";
@@ -385,7 +385,7 @@ didReceiveResponse:(NSURLResponse *)response
                 if ([self.imageCoder respondsToSelector:@selector(decodedImageWithData:format:)]) {
                     image = [self.imageCoder decodedImageWithData:imageData format:format];
                 } else {
-                    self.imageCoder = [SDWebImageDecoder sharedCoder];
+                    self.imageCoder = [[SDWebImageDecoder alloc] init];
                     [self.imageCoder decodedImageWithData:imageData format:format];
                 }
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
@@ -410,7 +410,7 @@ didReceiveResponse:(NSURLResponse *)response
                         if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
                             [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                         } else {
-                            self.imageCoder = [SDWebImageDecoder sharedCoder];
+                            self.imageCoder = [[SDWebImageDecoder alloc] init];
                             [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                         }
                         [self.imageData setData:imageData];

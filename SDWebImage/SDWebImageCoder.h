@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCompat.h"
 #import "NSData+ImageContentType.h"
-#import "NSImage+WebCache.h"
 
 /**
  Return the shared device-dependent RGB color space created with CGColorSpaceCreateDeviceRGB
@@ -26,13 +25,12 @@ CG_EXTERN CGColorSpaceRef _Nonnull SDCGColorSpaceGetDeviceRGB(void);
  */
 CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 
+
+// The is the image coder protocol to provide custom image decoding/encoding
+// All the method are called inside a dispatch queue and do not block main thread
 @protocol SDWebImageCoder <NSObject>
 
-@required
-+ (nonnull instancetype)sharedCoder;
-
 @optional
-
 /**
  Decode the image data to image.
 
@@ -49,6 +47,7 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @param data The image data has been downloaded so far
  @param format The recognized image format
  @param finished Whether the download has finished
+ @warning because incremental decoding need keep the data inside, we will alloc a new instance for each download operation to avoid conflicts
  @return The decoded image from data
  */
 - (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format finished:(BOOL)finished;

@@ -9,6 +9,7 @@
 #ifdef SD_WEBP
 
 #import "SDWebImageWebPCoder.h"
+#import "NSImage+WebCache.h"
 #import <ImageIO/ImageIO.h>
 #if __has_include(<webp/decode.h>) && __has_include(<webp/encode.h>) && __has_include(<webp/demux.h>) && __has_include(<webp/mux.h>)
 #import <webp/decode.h>

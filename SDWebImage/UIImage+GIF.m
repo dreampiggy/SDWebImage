@@ -9,6 +9,7 @@
 
 #import "UIImage+GIF.h"
 #import "SDWebImageGIFCoder.h"
+#import "NSImage+WebCache.h"
 
 @implementation UIImage (GIF)
 

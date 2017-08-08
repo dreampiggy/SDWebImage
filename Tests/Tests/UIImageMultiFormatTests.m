@@ -7,7 +7,7 @@
  */
 
 #import "SDTestCase.h"
-#import <SDWebImage/UIImage+MultiFormat.h>
+#import <SDWebImage/SDWebImageImageIOCoder.h>
 
 @interface UIImageMultiFormatTests : SDTestCase
 
@@ -25,7 +25,7 @@
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    UIImageOrientation orientation = (UIImageOrientation)[[UIImage class] performSelector:selector withObject:nil];
+    UIImageOrientation orientation = (UIImageOrientation)[[SDWebImageImageIOCoder class] performSelector:selector withObject:nil];
 #pragma clang diagnostic pop
     expect(orientation).to.equal(UIImageOrientationUp);
 }

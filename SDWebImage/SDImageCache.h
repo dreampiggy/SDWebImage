@@ -47,7 +47,7 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
 @property (nonatomic, nonnull, readonly) SDImageCacheConfig *config;
 
 /**
- *  Image Coder object - used for image decoding and encoding
+ *  The custom image coder used for image decoding and encoding
  *  If the provided coder does not implement the protocol, use the default coder instead
  */
 @property (nonatomic, nullable) id<SDWebImageCoder> imageCoder;

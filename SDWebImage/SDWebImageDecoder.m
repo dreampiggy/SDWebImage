@@ -54,7 +54,7 @@
 }
 
 - (UIImage *)incrementalDecodedImageWithData:(NSData *)data format:(SDImageFormat)format finished:(BOOL)finished {
-    NSAssert((self == [SDWebImageDecoder sharedCoder]), @"incremental decoding must be used on new alloced instance but not the shared instance");
+    NSAssert((self != [SDWebImageDecoder sharedCoder]), @"incremental decoding must be used on new alloced instance but not the shared instance");
     if (!data) {
         return nil;
     }

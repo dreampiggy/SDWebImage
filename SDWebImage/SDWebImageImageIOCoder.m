@@ -7,6 +7,7 @@
  */
 
 #import "SDWebImageImageIOCoder.h"
+#import "NSImage+WebCache.h"
 #import <ImageIO/ImageIO.h>
 
 #if SD_UIKIT || SD_WATCH

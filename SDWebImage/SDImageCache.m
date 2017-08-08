@@ -9,7 +9,7 @@
 #import "SDImageCache.h"
 #import "SDWebImageDecoder.h"
 #import <CommonCrypto/CommonDigest.h>
-#import "UIImage+ForceDecode.h"
+#import "NSImage+WebCache.h"
 
 // See https://github.com/rs/SDWebImage/pull/1141 for discussion
 @interface AutoPurgeCache : NSCache

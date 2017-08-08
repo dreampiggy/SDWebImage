@@ -10,6 +10,7 @@
 #import "SDTestCase.h"
 #import <SDWebImage/SDWebImageDownloader.h>
 #import <SDWebImage/SDWebImageDownloaderOperation.h>
+#import "SDWebImageTestDecoder.h"
 
 /**
  *  Category for SDWebImageDownloader so we can access the operationClass
@@ -344,6 +345,33 @@
                                            }
                                        }];
     expect(token2).toNot.beNil();
+    
+    [self waitForExpectationsWithCommonTimeout];
+}
+
+- (void)test22ThatCustomDeoderWorksForImageDownload {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Custom decoder for SDWebImageDownloader not works"];
+    SDWebImageDownloader *downloader = [[SDWebImageDownloader alloc] init];
+    downloader.imageCoder = [[SDWebImageTestDecoder alloc] init];
+    NSURL * testImageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImage" withExtension:@"png"];
+    
+    // Decoded result is JPEG
+    NSString *testJPEGImagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestImage" ofType:@"jpg"];
+    UIImage *testJPEGImage = [UIImage imageWithContentsOfFile:testJPEGImagePath];
+    
+    [downloader downloadImageWithURL:testImageURL options:0 progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, BOOL finished) {
+        NSData *data1 = UIImagePNGRepresentation(testJPEGImage);
+        NSData *data2 = UIImagePNGRepresentation(image);
+        if (![data1 isEqualToData:data2]) {
+            XCTFail(@"The image data is not equal to cutom decoder, check -[SDWebImageTestDecoder decodedImageWithData:format:]");
+        }
+        NSString *str1 = @"TestDecompress";
+        NSString *str2 = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        if (![str1 isEqualToString:str2]) {
+            XCTFail(@"The image data is not modified by the custom decoder, check -[SDWebImageTestDecoder decompressedImageWithImage:data:format:shouldScaleDown:]");
+        }
+        [expectation fulfill];
+    }];
     
     [self waitForExpectationsWithCommonTimeout];
 }

@@ -10,7 +10,9 @@
 #import "SDWebImageDecoder.h"
 #import "SDWebImageImageIOCoder.h"
 #import "SDWebImageGIFCoder.h"
+#ifdef SD_WEBP
 #import "SDWebImageWebPCoder.h"
+#endif
 
 @interface SDWebImageDecoder ()
 
@@ -87,7 +89,7 @@
     UIImage *decompressedImage;
     switch (format) {
         case SDImageFormatWebP:
-#if SD_WEBP
+#ifdef SD_WEBP
             decompressedImage = [[SDWebImageWebPCoder sharedCoder] decompressedImageWithImage:image data:data format:format shouldScaleDown:shouldScaleDown];
 #endif
             break;

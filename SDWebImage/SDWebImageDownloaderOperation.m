@@ -19,8 +19,6 @@ NSString *const SDWebImageDownloadFinishNotification = @"SDWebImageDownloadFinis
 static NSString *const kProgressCallbackKey = @"progress";
 static NSString *const kCompletedCallbackKey = @"completed";
 
-static NSString *const kWebPMIMEType = @"image/webp";
-
 typedef NSMutableDictionary<NSString *, id> SDCallbacksDictionary;
 
 @interface SDWebImageDownloaderOperation ()
@@ -44,8 +42,6 @@ typedef NSMutableDictionary<NSString *, id> SDCallbacksDictionary;
 #if SD_UIKIT
 @property (assign, nonatomic) UIBackgroundTaskIdentifier backgroundTaskId;
 #endif
-
-@property (strong, nonatomic, nullable) id<SDWebImageCoder> imageCoder;
 
 @end
 
@@ -296,14 +292,6 @@ didReceiveResponse:(NSURLResponse *)response
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
     [self.imageData appendData:data];
-    
-    if (![self.imageCoder conformsToProtocol:@protocol(SDWebImageCoder)]) {
-        if (self.internalCoderClass) {
-            self.imageCoder = [[self.internalCoderClass alloc] init];
-        } else {
-            self.imageCoder = [[SDWebImageDecoder alloc] init];
-        }
-    }
 
     if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0) {
         UIImage *image;
@@ -386,32 +374,25 @@ didReceiveResponse:(NSURLResponse *)response
                     image = [self.imageCoder decodedImageWithData:imageData format:format];
                 } else {
                     self.imageCoder = [[SDWebImageDecoder alloc] init];
-                    [self.imageCoder decodedImageWithData:imageData format:format];
+                    image = [self.imageCoder decodedImageWithData:imageData format:format];
                 }
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
                 image = SDScaledImageForKey(key, image);
                 
                 BOOL shouldDecode = YES;
-                // Do not force decoding animated GIFs and WebPs
+                // Do not force decoding animated GIFs
                 if (image.images) {
                     shouldDecode = NO;
-                } else {
-#ifdef SD_WEBP
-                    SDImageFormat imageFormat = [NSData sd_imageFormatForImageData:self.imageData];
-                    if (imageFormat == SDImageFormatWebP) {
-                        shouldDecode = NO;
-                    }
-#endif
                 }
 
                 if (shouldDecode) {
                     if (self.shouldDecompressImages) {
                         BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
                         if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
-                            [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
+                            image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                         } else {
                             self.imageCoder = [[SDWebImageDecoder alloc] init];
-                            [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
+                            image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                         }
                         [self.imageData setData:imageData];
                     }

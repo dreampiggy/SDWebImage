@@ -120,7 +120,7 @@ typedef SDHTTPHeadersDictionary * _Nullable (^SDWebImageDownloaderHeadersFilterB
 
 /**
  *  The custom image coder used for image decoding and encoding
- *  If the provided coder does not implement the protocol, use the default coder instead
+ *  If the provided coder does not implement the protocol, the default coder will be used instead
  */
 @property (nonatomic, strong, nullable) id<SDWebImageCoder> imageCoder;
 

@@ -187,12 +187,16 @@
         }
         SDWebImageDownloaderOperation *operation = [[sself.operationClass alloc] initWithRequest:request inSession:sself.session options:options];
         operation.shouldDecompressImages = sself.shouldDecompressImages;
-        operation.internalCoderClass = [sself.imageCoder class];
         
         if (sself.urlCredential) {
             operation.credential = sself.urlCredential;
         } else if (sself.username && sself.password) {
             operation.credential = [NSURLCredential credentialWithUser:sself.username password:sself.password persistence:NSURLCredentialPersistenceForSession];
+        }
+        
+        if (sself.imageCoder) {
+            Class imageCoderClass = [sself.imageCoder class];
+            operation.imageCoder = [[imageCoderClass alloc] init];
         }
         
         if (options & SDWebImageDownloaderHighPriority) {

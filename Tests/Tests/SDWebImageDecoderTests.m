@@ -9,6 +9,7 @@
 
 #import "SDTestCase.h"
 #import <SDWebImage/SDWebImageDecoder.h>
+#import <SDWebImage/SDWebImageWebPCoder.h>
 #import <SDWebImage/SDImageCache.h>
 #import <SDWebImage/SDWebImageDownloader.h>
 
@@ -116,15 +117,40 @@
     expect(decodedImage.size.height).to.equal(image.size.height);
 }
 
-- (void)test08ThatCustomDecoderWorksForImageCache {
+- (void)test08ThatStaticWebPCoderWorks {
+    NSURL *staticWebPURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImageStatic" withExtension:@"webp"];
+    NSData *staticWebPData = [NSData dataWithContentsOfURL:staticWebPURL];
+    UIImage *staticWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:staticWebPData format:SDImageFormatWebP];
+    expect(staticWebPImage).toNot.beNil();
+    
+    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:staticWebPImage format:SDImageFormatWebP];
+    expect(outputData).toNot.beNil();
+}
+
+- (void)test09ThatAnimatedWebPCoderWorks {
+    NSURL *animatedWebPURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImageAnimated" withExtension:@"webp"];
+    NSData *animatedWebPData = [NSData dataWithContentsOfURL:animatedWebPURL];
+    UIImage *animatedWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:animatedWebPData format:SDImageFormatWebP];
+    expect(animatedWebPImage).toNot.beNil();
+    expect(animatedWebPImage.images.count).to.beGreaterThan(0);
+    
+    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:animatedWebPImage format:SDImageFormatWebP];
+    expect(outputData).toNot.beNil();
+}
+
+- (void)test10ThatCustomDecoderWorksForImageCache {
     SDImageCache *cache = [[SDImageCache alloc] initWithNamespace:@"TestDecode"];
     cache.imageCoder = [[SDWebImageTestDecoder alloc] init];
     NSString * testImagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestImage" ofType:@"png"];
     UIImage *image = [UIImage imageWithContentsOfFile:testImagePath];
     NSString *key = @"TestPNGImageEncodedToDataAndRetrieveToJPEG";
     
-    [cache storeImage:image imageData:nil forKey:key toDisk:YES completion:nil];
-    [cache clearMemory];
+    dispatch_semaphore_t lock = dispatch_semaphore_create(0);
+    [cache storeImage:image imageData:nil forKey:key toDisk:YES completion:^{
+        [cache clearMemory];
+        dispatch_semaphore_signal(lock);
+    }];
+    dispatch_semaphore_wait(lock, kAsyncTestTimeout);
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
@@ -154,7 +180,7 @@
     
 }
 
-- (void)test09ThatCustomDeoderWorksForImageDownload {
+- (void)test11ThatCustomDeoderWorksForImageDownload {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Custom decoder not work for SDWebImageDownloader"];
     SDWebImageDownloader *downloader = [[SDWebImageDownloader alloc] init];
     downloader.imageCoder = [[SDWebImageTestDecoder alloc] init];

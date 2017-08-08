@@ -381,7 +381,7 @@
                 .bitstream.size = webpData.length,
                 .duration = duration,
                 .id = WEBP_CHUNK_ANMF,
-                .dispose_method = WEBP_MUX_DISPOSE_BACKGROUND,
+                .dispose_method = WEBP_MUX_DISPOSE_BACKGROUND, // each frame will clear canvas
                 .blend_method = WEBP_MUX_NO_BLEND
             };
             if (WebPMuxPushFrame(mux, &frame, 0) != WEBP_MUX_OK) {
@@ -395,21 +395,22 @@
         if (value) {
             loopCount = value.intValue;
         }
-        WebPMuxAnimParams params = {(uint32_t)0, loopCount};
+        WebPMuxAnimParams params = { .bgcolor = 0,
+            .loop_count = loopCount
+        };
         if (WebPMuxSetAnimationParams(mux, &params) != WEBP_MUX_OK) {
             WebPMuxDelete(mux);
             return nil;
         }
         
-        WebPData output_data;
-        WebPMuxError error = WebPMuxAssemble(mux, &output_data);
+        WebPData outputData;
+        WebPMuxError error = WebPMuxAssemble(mux, &outputData);
         WebPMuxDelete(mux);
         if (error != WEBP_MUX_OK) {
             return nil;
         }
-        NSData *result = [NSData dataWithBytes:output_data.bytes length:output_data.size];
-        WebPDataClear(&output_data);
-        return result.length ? result : nil;
+        data = [NSData dataWithBytes:outputData.bytes length:outputData.size];
+        WebPDataClear(&outputData);
     }
 #endif
     
@@ -433,40 +434,23 @@
         return nil;
     }
     
-    BOOL hasAlpha = SDCGImageRefContainsAlpha(imageRef);
+    size_t bytesPerRow = CGImageGetBytesPerRow(imageRef);
+    CGDataProviderRef dataProvider = CGImageGetDataProvider(imageRef);
+    CFDataRef dataRef = CGDataProviderCopyData(dataProvider);
+    uint8_t *rgba = (uint8_t *)CFDataGetBytePtr(dataRef);
     
-    CGBitmapInfo bitmapInfo;
-    if (!hasAlpha) {
-        bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaNoneSkipLast;
-    } else {
-        bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast;
-    }
-    CGContextRef context = CGBitmapContextCreate(NULL, width, height, 8, 0, SDCGColorSpaceGetDeviceRGB(), bitmapInfo);
-    if (!context) {
-        return nil;
-    }
-    
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
-    size_t bytesPerRow = CGBitmapContextGetBytesPerRow(context);
-    size_t length = height * bytesPerRow;
-    void *rgba = CGBitmapContextGetData(context);
-    if (length == 0 || !rgba) {
-        CGContextRelease(context);
-        return nil;
-    }
-    
-    void *data = NULL;
+    uint8_t *data = NULL;
     float quality = 100.0;
-    size_t size = WebPEncodeRGBA(rgba, (int)width, (int)height, (int)bytesPerRow, quality, data);
-    CGContextRelease(context);
-    if (rgba) {
-        NSAssert(YES, @"WTF");
-    }
+    size_t size = WebPEncodeRGBA(rgba, (int)width, (int)height, (int)bytesPerRow, quality, &data);
+    CFRelease(dataRef);
+    rgba = NULL;
+    
     if (size) {
+        // success
         webpData = [NSData dataWithBytes:data length:size];
-        if (rgba) {
-            WebPFree(rgba);
-        }
+    }
+    if (data) {
+        WebPFree(data);
     }
     
     return webpData;

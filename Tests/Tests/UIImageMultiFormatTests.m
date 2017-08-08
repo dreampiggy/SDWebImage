@@ -31,7 +31,7 @@
 }
 
 - (void)test02AnimatedWebPImageArrayWithEqualSizeAndScale {
-    NSURL *webpURL = [NSURL URLWithString:@"https://isparta.github.io/compare-webp/image/gif_webp/webp/2.webp"];
+    NSURL *webpURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImageAnimated" withExtension:@"webp"];
     NSData *data = [NSData dataWithContentsOfURL:webpURL];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"

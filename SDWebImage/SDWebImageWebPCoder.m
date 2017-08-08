@@ -237,6 +237,11 @@
     return image;
 }
 
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+    // WebP do not decompress
+    return image;
+}
+
 - (nullable UIImage *)sd_blendWebpImageWithCanvas:(CGContextRef)canvas iterator:(WebPIterator)iter {
     UIImage *image = [self sd_rawWebpImageWithData:iter.fragment];
     if (!image) {

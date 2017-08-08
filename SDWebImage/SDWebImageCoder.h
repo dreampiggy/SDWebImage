@@ -28,33 +28,48 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 
 @protocol SDWebImageCoder <NSObject>
 
+@required
++ (nonnull instancetype)sharedCoder;
+
 @optional
 
 /**
- Decode an data to image
+ Decode the image data to image.
 
- @param data The image data
- @param format The eetected image format
- @return The decoded image
+ @param data The image data to be decoded
+ @param format The recognized image format
+ @return The decoded image from data
  */
 - (nullable UIImage *)decodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format;
 
-/**
- <#Description#>
 
- @param data <#data description#>
- @param format <#format description#>
- @param finished <#finished description#>
- @return <#return value description#>
+/**
+ Incremental(Progressive) decode the image data to image.
+
+ @param data The image data has been downloaded so far
+ @param format The recognized image format
+ @param finished Whether the download has finished
+ @return The decoded image from data
  */
 - (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format finished:(BOOL)finished;
 
 /**
- <#Description#>
+ Decompress the image with original image and image data
 
- @param image <#image description#>
- @param format <#format description#>
- @return <#return value description#>
+ @param image The original image to be decompressed
+ @param data The pointer to original image data. The pointer itself is nonnull but image data can be null. This data will set to cache if needed. If you do not need to modify data at the sametime, ignore this param.
+ @param format The recognized image format
+ @param shouldScaleDown return YES if `SDWebImageScaleDownLargeImages` was set, otherwise return NO
+ @return The decompressed image
+ */
+- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown;
+
+/**
+ Encode the image to image data
+
+ @param image The image to be encoded
+ @param format The image format to encode, you should note `SDImageFormatUndefined` format is also  possible
+ @return The encoded image data
  */
 - (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format;
 

@@ -39,60 +39,60 @@
 		00733A711BC4880E00A5A117 /* UIImageView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 53922D95148C56230056699D /* UIImageView+WebCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		00733A721BC4880E00A5A117 /* UIView+WebCacheOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = AB615301192DA24600A2D8E9 /* UIView+WebCacheOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		00733A731BC4880E00A5A117 /* SDWebImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A2CAE031AB4BB5400B6BC39 /* SDWebImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		321E60861F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; };
-		321E60871F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; };
-		321E60881F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; };
-		321E60891F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; };
-		321E608A1F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; };
-		321E608B1F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; };
+		321E60861F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60871F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60881F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60891F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E608A1F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E608B1F38E8C800405457 /* SDWebImageCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60841F38E8C800405457 /* SDWebImageCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		321E608C1F38E8C800405457 /* SDWebImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60851F38E8C800405457 /* SDWebImageCoder.m */; };
 		321E608D1F38E8C800405457 /* SDWebImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60851F38E8C800405457 /* SDWebImageCoder.m */; };
 		321E608E1F38E8C800405457 /* SDWebImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60851F38E8C800405457 /* SDWebImageCoder.m */; };
 		321E608F1F38E8C800405457 /* SDWebImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60851F38E8C800405457 /* SDWebImageCoder.m */; };
 		321E60901F38E8C800405457 /* SDWebImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60851F38E8C800405457 /* SDWebImageCoder.m */; };
 		321E60911F38E8C800405457 /* SDWebImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60851F38E8C800405457 /* SDWebImageCoder.m */; };
-		321E60941F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; };
-		321E60951F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; };
-		321E60961F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; };
-		321E60971F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; };
-		321E60981F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; };
-		321E60991F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; };
+		321E60941F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60951F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60961F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60971F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60981F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60991F38E8ED00405457 /* SDWebImageImageIOCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60921F38E8ED00405457 /* SDWebImageImageIOCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		321E609A1F38E8ED00405457 /* SDWebImageImageIOCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60931F38E8ED00405457 /* SDWebImageImageIOCoder.m */; };
 		321E609B1F38E8ED00405457 /* SDWebImageImageIOCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60931F38E8ED00405457 /* SDWebImageImageIOCoder.m */; };
 		321E609C1F38E8ED00405457 /* SDWebImageImageIOCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60931F38E8ED00405457 /* SDWebImageImageIOCoder.m */; };
 		321E609D1F38E8ED00405457 /* SDWebImageImageIOCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60931F38E8ED00405457 /* SDWebImageImageIOCoder.m */; };
 		321E609E1F38E8ED00405457 /* SDWebImageImageIOCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60931F38E8ED00405457 /* SDWebImageImageIOCoder.m */; };
 		321E609F1F38E8ED00405457 /* SDWebImageImageIOCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60931F38E8ED00405457 /* SDWebImageImageIOCoder.m */; };
-		321E60A21F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; };
-		321E60A31F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; };
-		321E60A41F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; };
-		321E60A51F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; };
-		321E60A61F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; };
-		321E60A71F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; };
+		321E60A21F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60A31F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60A41F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60A51F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60A61F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60A71F38E8F600405457 /* SDWebImageGIFCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60A01F38E8F600405457 /* SDWebImageGIFCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		321E60A81F38E8F600405457 /* SDWebImageGIFCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60A11F38E8F600405457 /* SDWebImageGIFCoder.m */; };
 		321E60A91F38E8F600405457 /* SDWebImageGIFCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60A11F38E8F600405457 /* SDWebImageGIFCoder.m */; };
 		321E60AA1F38E8F600405457 /* SDWebImageGIFCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60A11F38E8F600405457 /* SDWebImageGIFCoder.m */; };
 		321E60AB1F38E8F600405457 /* SDWebImageGIFCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60A11F38E8F600405457 /* SDWebImageGIFCoder.m */; };
 		321E60AC1F38E8F600405457 /* SDWebImageGIFCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60A11F38E8F600405457 /* SDWebImageGIFCoder.m */; };
 		321E60AD1F38E8F600405457 /* SDWebImageGIFCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60A11F38E8F600405457 /* SDWebImageGIFCoder.m */; };
-		321E60B01F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; };
-		321E60B11F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; };
-		321E60B21F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; };
-		321E60B31F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; };
-		321E60B41F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; };
-		321E60B51F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; };
+		321E60B01F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60B11F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60B21F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60B31F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60B41F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60B51F38E90100405457 /* SDWebImageWebPCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60AE1F38E90100405457 /* SDWebImageWebPCoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		321E60B61F38E90100405457 /* SDWebImageWebPCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60AF1F38E90100405457 /* SDWebImageWebPCoder.m */; };
 		321E60B71F38E90100405457 /* SDWebImageWebPCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60AF1F38E90100405457 /* SDWebImageWebPCoder.m */; };
 		321E60B81F38E90100405457 /* SDWebImageWebPCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60AF1F38E90100405457 /* SDWebImageWebPCoder.m */; };
 		321E60B91F38E90100405457 /* SDWebImageWebPCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60AF1F38E90100405457 /* SDWebImageWebPCoder.m */; };
 		321E60BA1F38E90100405457 /* SDWebImageWebPCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60AF1F38E90100405457 /* SDWebImageWebPCoder.m */; };
 		321E60BB1F38E90100405457 /* SDWebImageWebPCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60AF1F38E90100405457 /* SDWebImageWebPCoder.m */; };
-		321E60BE1F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; };
-		321E60BF1F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; };
-		321E60C01F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; };
-		321E60C11F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; };
-		321E60C21F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; };
-		321E60C31F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; };
+		321E60BE1F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60BF1F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60C01F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60C11F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60C21F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		321E60C31F38E91700405457 /* UIImage+ForceDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 321E60BC1F38E91700405457 /* UIImage+ForceDecode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		321E60C41F38E91700405457 /* UIImage+ForceDecode.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60BD1F38E91700405457 /* UIImage+ForceDecode.m */; };
 		321E60C51F38E91700405457 /* UIImage+ForceDecode.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60BD1F38E91700405457 /* UIImage+ForceDecode.m */; };
 		321E60C61F38E91700405457 /* UIImage+ForceDecode.m in Sources */ = {isa = PBXBuildFile; fileRef = 321E60BD1F38E91700405457 /* UIImage+ForceDecode.m */; };
@@ -183,10 +183,6 @@
 		323F8B8F1F38EF770092B609 /* iterator_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B201F38EF770092B609 /* iterator_enc.c */; };
 		323F8B901F38EF770092B609 /* iterator_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B201F38EF770092B609 /* iterator_enc.c */; };
 		323F8B911F38EF770092B609 /* iterator_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B201F38EF770092B609 /* iterator_enc.c */; };
-		323F8B921F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B211F38EF770092B609 /* Makefile.am */; };
-		323F8B931F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B211F38EF770092B609 /* Makefile.am */; };
-		323F8B941F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B211F38EF770092B609 /* Makefile.am */; };
-		323F8B951F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B211F38EF770092B609 /* Makefile.am */; };
 		323F8B961F38EF770092B609 /* near_lossless_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B221F38EF770092B609 /* near_lossless_enc.c */; };
 		323F8B971F38EF770092B609 /* near_lossless_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B221F38EF770092B609 /* near_lossless_enc.c */; };
 		323F8B981F38EF770092B609 /* near_lossless_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B221F38EF770092B609 /* near_lossless_enc.c */; };
@@ -289,18 +285,6 @@
 		323F8BF91F38EF770092B609 /* animi.h in Headers */ = {isa = PBXBuildFile; fileRef = 323F8B331F38EF770092B609 /* animi.h */; };
 		323F8BFA1F38EF770092B609 /* animi.h in Headers */ = {isa = PBXBuildFile; fileRef = 323F8B331F38EF770092B609 /* animi.h */; };
 		323F8BFB1F38EF770092B609 /* animi.h in Headers */ = {isa = PBXBuildFile; fileRef = 323F8B331F38EF770092B609 /* animi.h */; };
-		323F8BFC1F38EF770092B609 /* libwebpmux.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B341F38EF770092B609 /* libwebpmux.pc.in */; };
-		323F8BFD1F38EF770092B609 /* libwebpmux.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B341F38EF770092B609 /* libwebpmux.pc.in */; };
-		323F8BFE1F38EF770092B609 /* libwebpmux.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B341F38EF770092B609 /* libwebpmux.pc.in */; };
-		323F8BFF1F38EF770092B609 /* libwebpmux.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B341F38EF770092B609 /* libwebpmux.pc.in */; };
-		323F8C001F38EF770092B609 /* libwebpmux.rc in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B351F38EF770092B609 /* libwebpmux.rc */; };
-		323F8C011F38EF770092B609 /* libwebpmux.rc in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B351F38EF770092B609 /* libwebpmux.rc */; };
-		323F8C021F38EF770092B609 /* libwebpmux.rc in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B351F38EF770092B609 /* libwebpmux.rc */; };
-		323F8C031F38EF770092B609 /* libwebpmux.rc in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B351F38EF770092B609 /* libwebpmux.rc */; };
-		323F8C041F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B361F38EF770092B609 /* Makefile.am */; };
-		323F8C051F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B361F38EF770092B609 /* Makefile.am */; };
-		323F8C061F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B361F38EF770092B609 /* Makefile.am */; };
-		323F8C071F38EF770092B609 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 323F8B361F38EF770092B609 /* Makefile.am */; };
 		323F8C081F38EF770092B609 /* muxedit.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B3A1F38EF770092B609 /* muxedit.c */; };
 		323F8C091F38EF770092B609 /* muxedit.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B3A1F38EF770092B609 /* muxedit.c */; };
 		323F8C0A1F38EF770092B609 /* muxedit.c in Sources */ = {isa = PBXBuildFile; fileRef = 323F8B3A1F38EF770092B609 /* muxedit.c */; };
@@ -347,7 +331,7 @@
 		4314D1631D0E0E3B004B36C9 /* demux.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CC51998E60B007367ED /* demux.h */; };
 		4314D16B1D0E0E3B004B36C9 /* encode.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CC61998E60B007367ED /* encode.h */; };
 		4314D16D1D0E0E3B004B36C9 /* SDImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 53922D85148C56230056699D /* SDImageCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4314D16F1D0E0E3B004B36C9 /* NSData+ImageContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D5B9140188EE8DD006D06BD /* NSData+ImageContentType.h */; };
+		4314D16F1D0E0E3B004B36C9 /* NSData+ImageContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D5B9140188EE8DD006D06BD /* NSData+ImageContentType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4314D1701D0E0E3B004B36C9 /* mux.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CC81998E60B007367ED /* mux.h */; };
 		4314D1721D0E0E3B004B36C9 /* SDWebImageCompat.h in Headers */ = {isa = PBXBuildFile; fileRef = 53922D88148C56230056699D /* SDWebImageCompat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4314D1741D0E0E3B004B36C9 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CCA1998E60B007367ED /* types.h */; };
@@ -364,8 +348,8 @@
 		4314D1861D0E0E3B004B36C9 /* UIImageView+HighlightedWebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = ABBE71A518C43B4D00B75E91 /* UIImageView+HighlightedWebCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4314D1881D0E0E3B004B36C9 /* format_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CC71998E60B007367ED /* format_constants.h */; };
 		4314D18F1D0E0E3B004B36C9 /* UIView+WebCacheOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = AB615301192DA24600A2D8E9 /* UIView+WebCacheOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4314D1901D0E0E3B004B36C9 /* UIImage+GIF.h in Headers */ = {isa = PBXBuildFile; fileRef = A18A6CC5172DC28500419892 /* UIImage+GIF.h */; };
-		4314D1921D0E0E3B004B36C9 /* UIImage+MultiFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EDFB8817623F7C00698166 /* UIImage+MultiFormat.h */; };
+		4314D1901D0E0E3B004B36C9 /* UIImage+GIF.h in Headers */ = {isa = PBXBuildFile; fileRef = A18A6CC5172DC28500419892 /* UIImage+GIF.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4314D1921D0E0E3B004B36C9 /* UIImage+MultiFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EDFB8817623F7C00698166 /* UIImage+MultiFormat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		431738BD1CDFC2660008FEB9 /* decode.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CC41998E60B007367ED /* decode.h */; };
 		431738BE1CDFC2660008FEB9 /* demux.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CC51998E60B007367ED /* demux.h */; };
 		431738BF1CDFC2660008FEB9 /* encode.h in Headers */ = {isa = PBXBuildFile; fileRef = DA577CC61998E60B007367ED /* encode.h */; };
@@ -585,9 +569,9 @@
 		5376131E155AD0D5005750A4 /* SDWebImagePrefetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 53922D91148C56230056699D /* SDWebImagePrefetcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5376131F155AD0D5005750A4 /* UIButton+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 53922D93148C56230056699D /* UIButton+WebCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53761320155AD0D5005750A4 /* UIImageView+WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 53922D95148C56230056699D /* UIImageView+WebCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53EDFB8A17623F7C00698166 /* UIImage+MultiFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EDFB8817623F7C00698166 /* UIImage+MultiFormat.h */; };
+		53EDFB8A17623F7C00698166 /* UIImage+MultiFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EDFB8817623F7C00698166 /* UIImage+MultiFormat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53EDFB8C17623F7C00698166 /* UIImage+MultiFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EDFB8917623F7C00698166 /* UIImage+MultiFormat.m */; };
-		5D5B9142188EE8DD006D06BD /* NSData+ImageContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D5B9140188EE8DD006D06BD /* NSData+ImageContentType.h */; };
+		5D5B9142188EE8DD006D06BD /* NSData+ImageContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D5B9140188EE8DD006D06BD /* NSData+ImageContentType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D5B9145188EE8DD006D06BD /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D5B9141188EE8DD006D06BD /* NSData+ImageContentType.m */; };
 		80377BF81F2F665300F89830 /* bit_reader_inl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 80377BDE1F2F665300F89830 /* bit_reader_inl_utils.h */; };
 		80377BF91F2F665300F89830 /* bit_reader_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 80377BDF1F2F665300F89830 /* bit_reader_utils.c */; };
@@ -1255,7 +1239,7 @@
 		80377EE41F2F66D500F89830 /* vp8li_dec.h in Headers */ = {isa = PBXBuildFile; fileRef = 80377E841F2F66D000F89830 /* vp8li_dec.h */; };
 		80377EE51F2F66D500F89830 /* webp_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 80377E851F2F66D000F89830 /* webp_dec.c */; };
 		80377EE61F2F66D500F89830 /* webpi_dec.h in Headers */ = {isa = PBXBuildFile; fileRef = 80377E861F2F66D000F89830 /* webpi_dec.h */; };
-		A18A6CC7172DC28500419892 /* UIImage+GIF.h in Headers */ = {isa = PBXBuildFile; fileRef = A18A6CC5172DC28500419892 /* UIImage+GIF.h */; };
+		A18A6CC7172DC28500419892 /* UIImage+GIF.h in Headers */ = {isa = PBXBuildFile; fileRef = A18A6CC5172DC28500419892 /* UIImage+GIF.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A18A6CC9172DC28500419892 /* UIImage+GIF.m in Sources */ = {isa = PBXBuildFile; fileRef = A18A6CC6172DC28500419892 /* UIImage+GIF.m */; };
 		AB615303192DA24600A2D8E9 /* UIView+WebCacheOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = AB615301192DA24600A2D8E9 /* UIView+WebCacheOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB615306192DA24600A2D8E9 /* UIView+WebCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = AB615302192DA24600A2D8E9 /* UIView+WebCacheOperation.m */; };
@@ -1289,7 +1273,6 @@
 		323F8B1E1F38EF770092B609 /* histogram_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = histogram_enc.c; sourceTree = "<group>"; };
 		323F8B1F1F38EF770092B609 /* histogram_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = histogram_enc.h; sourceTree = "<group>"; };
 		323F8B201F38EF770092B609 /* iterator_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iterator_enc.c; sourceTree = "<group>"; };
-		323F8B211F38EF770092B609 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		323F8B221F38EF770092B609 /* near_lossless_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = near_lossless_enc.c; sourceTree = "<group>"; };
 		323F8B231F38EF770092B609 /* picture_csp_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picture_csp_enc.c; sourceTree = "<group>"; };
 		323F8B241F38EF770092B609 /* picture_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picture_enc.c; sourceTree = "<group>"; };
@@ -1307,10 +1290,6 @@
 		323F8B301F38EF770092B609 /* webp_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = webp_enc.c; sourceTree = "<group>"; };
 		323F8B321F38EF770092B609 /* anim_encode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = anim_encode.c; sourceTree = "<group>"; };
 		323F8B331F38EF770092B609 /* animi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animi.h; sourceTree = "<group>"; };
-		323F8B341F38EF770092B609 /* libwebpmux.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libwebpmux.pc.in; sourceTree = "<group>"; };
-		323F8B351F38EF770092B609 /* libwebpmux.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libwebpmux.rc; sourceTree = "<group>"; };
-		323F8B361F38EF770092B609 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		323F8B371F38EF770092B609 /* mux.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = mux.xcodeproj; sourceTree = "<group>"; };
 		323F8B3A1F38EF770092B609 /* muxedit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = muxedit.c; sourceTree = "<group>"; };
 		323F8B3B1F38EF770092B609 /* muxi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = muxi.h; sourceTree = "<group>"; };
 		323F8B3C1F38EF770092B609 /* muxinternal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = muxinternal.c; sourceTree = "<group>"; };
@@ -1578,7 +1557,6 @@
 				323F8B1E1F38EF770092B609 /* histogram_enc.c */,
 				323F8B1F1F38EF770092B609 /* histogram_enc.h */,
 				323F8B201F38EF770092B609 /* iterator_enc.c */,
-				323F8B211F38EF770092B609 /* Makefile.am */,
 				323F8B221F38EF770092B609 /* near_lossless_enc.c */,
 				323F8B231F38EF770092B609 /* picture_csp_enc.c */,
 				323F8B241F38EF770092B609 /* picture_enc.c */,
@@ -1603,23 +1581,12 @@
 			children = (
 				323F8B321F38EF770092B609 /* anim_encode.c */,
 				323F8B331F38EF770092B609 /* animi.h */,
-				323F8B341F38EF770092B609 /* libwebpmux.pc.in */,
-				323F8B351F38EF770092B609 /* libwebpmux.rc */,
-				323F8B361F38EF770092B609 /* Makefile.am */,
-				323F8B371F38EF770092B609 /* mux.xcodeproj */,
 				323F8B3A1F38EF770092B609 /* muxedit.c */,
 				323F8B3B1F38EF770092B609 /* muxi.h */,
 				323F8B3C1F38EF770092B609 /* muxinternal.c */,
 				323F8B3D1F38EF770092B609 /* muxread.c */,
 			);
 			path = mux;
-			sourceTree = "<group>";
-		};
-		323F8B381F38EF770092B609 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		4369C2851D9811BB007E863A /* WebCache Categories */ = {
@@ -2568,12 +2535,6 @@
 			mainGroup = 53922D64148C55810056699D;
 			productRefGroup = 53922D70148C55820056699D /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 323F8B381F38EF770092B609 /* Products */;
-					ProjectRef = 323F8B371F38EF770092B609 /* mux.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				53761307155AD0D5005750A4 /* SDWebImage iOS static */,
@@ -2591,10 +2552,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				323F8B931F38EF770092B609 /* Makefile.am in Resources */,
-				323F8C051F38EF770092B609 /* Makefile.am in Resources */,
-				323F8BFD1F38EF770092B609 /* libwebpmux.pc.in in Resources */,
-				323F8C011F38EF770092B609 /* libwebpmux.rc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2602,10 +2559,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				323F8B941F38EF770092B609 /* Makefile.am in Resources */,
-				323F8C061F38EF770092B609 /* Makefile.am in Resources */,
-				323F8BFE1F38EF770092B609 /* libwebpmux.pc.in in Resources */,
-				323F8C021F38EF770092B609 /* libwebpmux.rc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2613,10 +2566,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				323F8B951F38EF770092B609 /* Makefile.am in Resources */,
-				323F8C071F38EF770092B609 /* Makefile.am in Resources */,
-				323F8BFF1F38EF770092B609 /* libwebpmux.pc.in in Resources */,
-				323F8C031F38EF770092B609 /* libwebpmux.rc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2624,10 +2573,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				323F8B921F38EF770092B609 /* Makefile.am in Resources */,
-				323F8C041F38EF770092B609 /* Makefile.am in Resources */,
-				323F8BFC1F38EF770092B609 /* libwebpmux.pc.in in Resources */,
-				323F8C001F38EF770092B609 /* libwebpmux.rc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

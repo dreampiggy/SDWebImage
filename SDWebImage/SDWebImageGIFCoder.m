@@ -63,6 +63,11 @@
 #endif
 }
 
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+    // GIF do not decompress
+    return image;
+}
+
 #pragma mark - Encode
 - (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
     return nil;

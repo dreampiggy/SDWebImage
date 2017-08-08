@@ -9,7 +9,7 @@
 #ifdef SD_WEBP
 
 #import "UIImage+WebP.h"
-#import "SDWebImageDecoder.h"
+#import "SDWebImageWebPCoder.h"
 
 #import "objc/runtime.h"
 
@@ -22,7 +22,10 @@
 }
 
 + (nullable UIImage *)sd_imageWithWebPData:(nullable NSData *)data {
-    return [[SDWebImageDecoder sharedCoder] decodedImageWithData:data format:SDImageFormatWebP];
+    if (!data) {
+        return nil;
+    }
+    return [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:data format:SDImageFormatWebP];
 }
 
 @end

@@ -45,6 +45,8 @@ typedef NSMutableDictionary<NSString *, id> SDCallbacksDictionary;
 @property (assign, nonatomic) UIBackgroundTaskIdentifier backgroundTaskId;
 #endif
 
+@property (strong, nonatomic, nullable) id<SDWebImageCoder> imageCoder;
+
 @end
 
 @implementation SDWebImageDownloaderOperation
@@ -294,6 +296,14 @@ didReceiveResponse:(NSURLResponse *)response
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
     [self.imageData appendData:data];
+    
+    if (![self.imageCoder conformsToProtocol:@protocol(SDWebImageCoder)]) {
+        if (self.internalCoderClass) {
+            self.imageCoder = [[self.internalCoderClass alloc] init];
+        } else {
+            self.imageCoder = [[SDWebImageDecoder alloc] init];
+        }
+    }
 
     if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0) {
         UIImage *image;
@@ -301,21 +311,23 @@ didReceiveResponse:(NSURLResponse *)response
         SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
         const NSInteger totalSize = imageData.length;
         BOOL finished = (self.expectedSize == totalSize);
-        if ([self.internalImageCoder respondsToSelector:@selector(incrementalDecodedImageWithData:format:finished:)]) {
-            image = [self.internalImageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
+        if ([self.imageCoder respondsToSelector:@selector(incrementalDecodedImageWithData:format:finished:)]) {
+            image = [self.imageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
         } else {
-            self.internalImageCoder = [[SDWebImageDecoder alloc] init];
-            image = [self.internalImageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
+            self.imageCoder = [[SDWebImageDecoder alloc] init];
+            image = [self.imageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
         }
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
-            UIImage *scaledImage = SDScaledImageForKey(key, image);
             if (self.shouldDecompressImages) {
-                image = [UIImage decodedImageWithImage:scaledImage];
+                if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
+                    image = [self.imageCoder decompressedImageWithImage:image data:&data format:format shouldScaleDown:NO];
+                } else {
+                    self.imageCoder = [[SDWebImageDecoder alloc] init];
+                    image = [self.imageCoder decompressedImageWithImage:image data:&data format:format shouldScaleDown:NO];
+                }
             }
-            else {
-                image = scaledImage;
-            }
+            image = SDScaledImageForKey(key, image);
             
             [self callCompletionBlocksWithImage:image imageData:nil error:nil finished:NO];
         }
@@ -370,11 +382,11 @@ didReceiveResponse:(NSURLResponse *)response
                 UIImage *image;
                 NSData *imageData = [self.imageData copy];
                 SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
-                if ([self.internalImageCoder respondsToSelector:@selector(decodedImageWithData:format:)]) {
-                    image = [self.internalImageCoder decodedImageWithData:imageData format:format];
+                if ([self.imageCoder respondsToSelector:@selector(decodedImageWithData:format:)]) {
+                    image = [self.imageCoder decodedImageWithData:imageData format:format];
                 } else {
-                    self.internalImageCoder = [SDWebImageDecoder sharedCoder];
-                    [self.internalImageCoder decodedImageWithData:imageData format:format];
+                    self.imageCoder = [SDWebImageDecoder sharedCoder];
+                    [self.imageCoder decodedImageWithData:imageData format:format];
                 }
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
                 image = SDScaledImageForKey(key, image);
@@ -394,14 +406,14 @@ didReceiveResponse:(NSURLResponse *)response
 
                 if (shouldDecode) {
                     if (self.shouldDecompressImages) {
-                        if (self.options & SDWebImageDownloaderScaleDownLargeImages) {
-#if SD_UIKIT || SD_WATCH
-                            image = [UIImage decodedAndScaledDownImageWithImage:image];
-                            [self.imageData setData:UIImagePNGRepresentation(image)];
-#endif
+                        BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
+                        if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
+                            [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                         } else {
-                            image = [UIImage decodedImageWithImage:image];
+                            self.imageCoder = [SDWebImageDecoder sharedCoder];
+                            [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                         }
+                        [self.imageData setData:imageData];
                     }
                 }
                 if (CGSizeEqualToSize(image.size, CGSizeZero)) {

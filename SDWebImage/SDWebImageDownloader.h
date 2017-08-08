@@ -112,12 +112,15 @@ typedef SDHTTPHeadersDictionary * _Nullable (^SDWebImageDownloaderHeadersFilterB
  */
 @property (readonly, nonatomic) NSUInteger currentDownloadCount;
 
-
 /**
  *  The timeout value (in seconds) for the download operation. Default: 15.0.
  */
 @property (assign, nonatomic) NSTimeInterval downloadTimeout;
 
+/**
+ *  The downloader image coder class used for image decoding
+ */
+@property (nonatomic, copy, nullable) Class downloadCoderClass;
 
 /**
  * The configuration in use by the internal NSURLSession.

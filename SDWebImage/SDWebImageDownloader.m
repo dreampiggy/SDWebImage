@@ -187,6 +187,7 @@
         }
         SDWebImageDownloaderOperation *operation = [[sself.operationClass alloc] initWithRequest:request inSession:sself.session options:options];
         operation.shouldDecompressImages = sself.shouldDecompressImages;
+        operation.internalCoderClass = sself.downloadCoderClass;
         
         if (sself.urlCredential) {
             operation.credential = sself.urlCredential;

@@ -66,7 +66,7 @@ FOUNDATION_EXPORT NSString * _Nonnull const SDWebImageDownloadFinishNotification
  */
 @property (nonatomic, strong, nullable) NSURLCredential *credential;
 
-@property (nonatomic, strong, nullable) id internalImageCoder;
+@property (nonatomic, copy, nullable) Class internalCoderClass;
 
 /**
  * The SDWebImageDownloaderOptions for the receiver.

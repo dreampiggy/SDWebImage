@@ -79,6 +79,29 @@
     return [self.incrementalCoder incrementalDecodedImageWithData:data format:format finished:finished];
 }
 
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+    if (!image) {
+        return nil;
+    }
+    
+    UIImage *decompressedImage;
+    switch (format) {
+        case SDImageFormatWebP:
+#if SD_WEBP
+            decompressedImage = [[SDWebImageWebPCoder sharedCoder] decompressedImageWithImage:image data:data format:format shouldScaleDown:shouldScaleDown];
+#endif
+            break;
+        case SDImageFormatGIF:
+            decompressedImage = [[SDWebImageGIFCoder sharedCoder] decompressedImageWithImage:image data:data format:format shouldScaleDown:shouldScaleDown];
+            break;
+        default:
+            decompressedImage = [[SDWebImageImageIOCoder sharedCoder] decompressedImageWithImage:image data:data format:format shouldScaleDown:shouldScaleDown];
+            break;
+    }
+    
+    return decompressedImage;
+}
+
 #pragma mark - Encode
 - (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
     if (!image) {

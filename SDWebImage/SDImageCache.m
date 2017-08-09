@@ -354,7 +354,7 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
             image = [[SDWebImageDecoder sharedCoder] decodedImageWithData:data format:imageFormat];
         }
         
-        image = [self scaledImageForKey:key image:image];
+        image = SDScaledImageForKey(key, image);
         if (self.config.shouldDecompressImages) {
             if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
                 image = [self.imageCoder decompressedImageWithImage:image data:&data format:imageFormat shouldScaleDown:NO];
@@ -366,10 +366,6 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
     } else {
         return nil;
     }
-}
-
-- (nullable UIImage *)scaledImageForKey:(nullable NSString *)key image:(nullable UIImage *)image {
-    return SDScaledImageForKey(key, image);
 }
 
 - (nullable NSOperation *)queryCacheOperationForKey:(nullable NSString *)key done:(nullable SDCacheQueryCompletedBlock)doneBlock {

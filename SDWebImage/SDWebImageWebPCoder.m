@@ -10,6 +10,7 @@
 
 #import "SDWebImageWebPCoder.h"
 #import "NSImage+WebCache.h"
+#import "UIImage+MultiFormat.h"
 #import <ImageIO/ImageIO.h>
 #if __has_include(<webp/decode.h>) && __has_include(<webp/encode.h>) && __has_include(<webp/demux.h>) && __has_include(<webp/mux.h>)
 #import <webp/decode.h>
@@ -22,8 +23,6 @@
 #import "webp/demux.h"
 #import "webp/mux.h"
 #endif
-
-#import "objc/runtime.h"
 
 @implementation SDWebImageWebPCoder {
     WebPIDecoder *_idec;
@@ -160,7 +159,7 @@
     NSArray<UIImage *> *animatedImages = [self sd_animatedImagesWithImages:images durations:durations totalDuration:totalDuration];
     finalImage = [UIImage animatedImageWithImages:animatedImages duration:totalDuration / 1000.0];
     if (finalImage) {
-        objc_setAssociatedObject(finalImage, NSSelectorFromString(@"sd_webpLoopCount"), @(loopCount), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        finalImage.sd_imageLoopCount = loopCount;
     }
 #elif SD_MAC
     finalImage = images.firstObject;
@@ -390,11 +389,7 @@
             }
         }
         
-        int loopCount = 0;
-        NSNumber *value = objc_getAssociatedObject(image, NSSelectorFromString(@"sd_webpLoopCount"));
-        if (value) {
-            loopCount = value.intValue;
-        }
+        int loopCount = (int)image.sd_imageLoopCount;
         WebPMuxAnimParams params = { .bgcolor = 0,
             .loop_count = loopCount
         };

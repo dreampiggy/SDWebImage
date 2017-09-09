@@ -503,7 +503,7 @@
         if (idx == 0) {
             return;
         }
-        if (image == previousImage) {
+        if ([image isEqual:previousImage]) {
             repeatCount++;
         } else {
             [images addObject:previousImage];

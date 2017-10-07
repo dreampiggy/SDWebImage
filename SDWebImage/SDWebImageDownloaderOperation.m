@@ -413,23 +413,16 @@ didReceiveResponse:(NSURLResponse *)response
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
                 image = SDScaledImageForKey(key, image);
                 
-                BOOL shouldDecode = YES;
                 // Do not force decoding animated GIFs
-                if (image.images) {
-                    shouldDecode = NO;
-                }
-
-                if (shouldDecode) {
-                    if (self.shouldDecompressImages) {
-                        BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
-                        if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
-                            image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
-                        } else {
-                            self.imageCoder = [[SDWebImageDecoder alloc] init];
-                            image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
-                        }
-                        [self.imageData setData:imageData];
+                if (!image.images && self.shouldDecompressImages) {
+                    BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
+                    if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
+                        image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
+                    } else {
+                        self.imageCoder = [[SDWebImageDecoder alloc] init];
+                        image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                     }
+                    [self.imageData setData:imageData];
                 }
                 if (CGSizeEqualToSize(image.size, CGSizeZero)) {
                     [self callCompletionBlocksWithError:[NSError errorWithDomain:SDWebImageErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey : @"Downloaded image has 0 pixels"}]];

@@ -14,8 +14,7 @@
 
 @implementation UIImage (WebP)
 
-- (NSInteger)sd_webpLoopCount
-{
+- (NSInteger)sd_webpLoopCount {
     return self.sd_imageLoopCount;
 }
 

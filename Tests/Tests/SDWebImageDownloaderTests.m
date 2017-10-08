@@ -10,6 +10,7 @@
 #import "SDTestCase.h"
 #import <SDWebImage/SDWebImageDownloader.h>
 #import <SDWebImage/SDWebImageDownloaderOperation.h>
+#import <SDWebImage/SDWebImageCodersManager.h>
 #import "SDWebImageTestDecoder.h"
 
 /**
@@ -352,7 +353,7 @@
 - (void)test22ThatCustomDeoderWorksForImageDownload {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Custom decoder for SDWebImageDownloader not works"];
     SDWebImageDownloader *downloader = [[SDWebImageDownloader alloc] init];
-    downloader.imageCoder = [[SDWebImageTestDecoder alloc] init];
+    [[SDWebImageCodersManager sharedInstance] addCoder:[[SDWebImageTestDecoder alloc] init]];
     NSURL * testImageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImage" withExtension:@"png"];
     
     // Decoded result is JPEG

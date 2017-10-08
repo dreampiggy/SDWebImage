@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCompat.h"
 #import "SDImageCacheConfig.h"
-#import "SDWebImageCoder.h"
 
 typedef NS_ENUM(NSInteger, SDImageCacheType) {
     /**
@@ -45,12 +44,6 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
  *  Cache Config object - storing all kind of settings
  */
 @property (nonatomic, nonnull, readonly) SDImageCacheConfig *config;
-
-/**
- *  The custom image coder used for image decoding and encoding
- *  If the provided coder does not implement the protocol, the default coder will be used instead
- */
-@property (nonatomic, nullable) id<SDWebImageCoder> imageCoder;
 
 /**
  * The maximum "total cost" of the in-memory image cache. The cost function is the number of pixels held in memory.

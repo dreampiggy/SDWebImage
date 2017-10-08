@@ -39,8 +39,8 @@ FOUNDATION_EXPORT const unsigned char WebImageVersionString[];
     #import <SDWebImage/MKAnnotationView+WebCache.h>
 #endif
 
+#import <SDWebImage/SDWebImageCodersManager.h>
 #import <SDWebImage/SDWebImageCoder.h>
-#import <SDWebImage/SDWebImageDecoder.h>
 #import <SDWebImage/SDWebImageWebPCoder.h>
 #import <SDWebImage/SDWebImageGIFCoder.h>
 #import <SDWebImage/SDWebImageImageIOCoder.h>

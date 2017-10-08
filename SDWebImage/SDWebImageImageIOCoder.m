@@ -9,6 +9,7 @@
 #import "SDWebImageImageIOCoder.h"
 #import "NSImage+WebCache.h"
 #import <ImageIO/ImageIO.h>
+#import "NSData+ImageContentType.h"
 
 #if SD_UIKIT || SD_WATCH
 static const size_t kBytesPerPixel = 4;
@@ -63,6 +64,26 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 }
 
 #pragma mark - Decode
+
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    switch ([NSData sd_imageFormatForImageData:data]) {
+        case SDImageFormatGIF:
+        case SDImageFormatWebP:
+            return NO;
+        default:
+            return YES;
+    }
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    switch (format) {
+        case SDImageFormatGIF:
+        case SDImageFormatWebP:
+            return NO;
+        default:
+            return YES;
+    }
+}
 
 - (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
     if (!data) {

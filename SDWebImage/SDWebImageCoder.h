@@ -30,7 +30,22 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 // All the method are called inside a dispatch queue and do not block main thread
 @protocol SDWebImageCoder <NSObject>
 
-@optional
+/**
+ Returns YES if this coder can decode some data. Otherwise, it should be passed to another coder
+ 
+ @param data The image data so we can look at it
+ @return YES if this coder can decode the data, NO otherwise
+ */
+- (BOOL)canDecodeData:(nullable NSData *)data;
+
+/**
+ Returns YES if this coder can encode some image. Otherwise, it should be passed to another coder
+ 
+ @param format The image format
+ @return YES if this coder can encode the image, NO otherwise
+ */
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format;
+
 /**
  Decode the image data to image.
 
@@ -39,18 +54,6 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @return The decoded image from data
  */
 - (nullable UIImage *)decodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format;
-
-
-/**
- Incremental(Progressive) decode the image data to image.
-
- @param data The image data has been downloaded so far
- @param format The recognized image format
- @param finished Whether the download has finished
- @warning because incremental decoding need keep the data inside, we will alloc a new instance for each download operation to avoid conflicts
- @return The decoded image from data
- */
-- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format finished:(BOOL)finished;
 
 /**
  Decompress the image with original image and image data
@@ -71,5 +74,18 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @return The encoded image data
  */
 - (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format;
+
+@optional
+
+/**
+ Incremental(Progressive) decode the image data to image.
+ 
+ @param data The image data has been downloaded so far
+ @param format The recognized image format
+ @param finished Whether the download has finished
+ @warning because incremental decoding need keep the data inside, we will alloc a new instance for each download operation to avoid conflicts
+ @return The decoded image from data
+ */
+- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format finished:(BOOL)finished;
 
 @end

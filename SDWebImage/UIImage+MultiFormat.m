@@ -7,9 +7,9 @@
  */
 
 #import "UIImage+MultiFormat.h"
-#import "SDWebImageDecoder.h"
 
 #import "objc/runtime.h"
+#import "SDWebImageCodersManager.h"
 
 @implementation UIImage (MultiFormat)
 
@@ -29,7 +29,7 @@
 
 + (nullable UIImage *)sd_imageWithData:(nullable NSData *)data {
     SDImageFormat format = [NSData sd_imageFormatForImageData:data];
-    return [[SDWebImageDecoder sharedCoder] decodedImageWithData:data format:format];
+    return [[SDWebImageCodersManager sharedInstance] decodedImageWithData:data format:format];
 }
 
 - (nullable NSData *)sd_imageData {
@@ -39,7 +39,7 @@
 - (nullable NSData *)sd_imageDataAsFormat:(SDImageFormat)imageFormat {
     NSData *imageData = nil;
     if (self) {
-        imageData = [[SDWebImageDecoder sharedCoder] encodedDataWithImage:self format:imageFormat];
+        imageData = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:self format:imageFormat];
     }
     return imageData;
 }

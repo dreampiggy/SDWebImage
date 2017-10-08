@@ -186,12 +186,7 @@
         } else if (sself.username && sself.password) {
             operation.credential = [NSURLCredential credentialWithUser:sself.username password:sself.password persistence:NSURLCredentialPersistenceForSession];
         }
-        
-        if (sself.imageCoder) {
-            Class imageCoderClass = [sself.imageCoder class];
-            operation.imageCoder = [[imageCoderClass alloc] init];
-        }
-        
+                
         if (options & SDWebImageDownloaderHighPriority) {
             operation.queuePriority = NSOperationQueuePriorityHigh;
         } else if (options & SDWebImageDownloaderLowPriority) {

@@ -7,7 +7,7 @@
  */
 
 #import "UIImage+ForceDecode.h"
-#import "SDWebImageDecoder.h"
+#import "SDWebImageCodersManager.h"
 
 @implementation UIImage (ForceDecode)
 
@@ -16,7 +16,7 @@
         return nil;
     }
     NSData *tempData;
-    return [[SDWebImageDecoder sharedCoder] decompressedImageWithImage:image data:&tempData format:SDImageFormatUndefined shouldScaleDown:NO];
+    return [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&tempData format:SDImageFormatUndefined shouldScaleDown:NO];
 }
 
 + (UIImage *)decodedAndScaledDownImageWithImage:(UIImage *)image {
@@ -24,7 +24,7 @@
         return nil;
     }
     NSData *tempData;
-    return [[SDWebImageDecoder sharedCoder] decompressedImageWithImage:image data:&tempData format:SDImageFormatUndefined shouldScaleDown:YES];
+    return [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&tempData format:SDImageFormatUndefined shouldScaleDown:YES];
 }
 
 @end

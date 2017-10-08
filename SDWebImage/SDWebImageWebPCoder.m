@@ -11,6 +11,7 @@
 #import "SDWebImageWebPCoder.h"
 #import "NSImage+WebCache.h"
 #import "UIImage+MultiFormat.h"
+#import "NSData+ImageContentType.h"
 #import <ImageIO/ImageIO.h>
 #if __has_include(<webp/decode.h>) && __has_include(<webp/encode.h>) && __has_include(<webp/demux.h>) && __has_include(<webp/mux.h>)
 #import <webp/decode.h>
@@ -45,6 +46,15 @@
 }
 
 #pragma mark - Decode
+
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    return ([NSData sd_imageFormatForImageData:data] == SDImageFormatWebP);
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    return (format == SDImageFormatWebP);
+}
+
 - (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
     if (!data) {
         return nil;

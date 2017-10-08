@@ -8,6 +8,7 @@
 
 #import "SDWebImageGIFCoder.h"
 #import <ImageIO/ImageIO.h>
+#import "NSData+ImageContentType.h"
 
 @implementation SDWebImageGIFCoder
 
@@ -21,6 +22,15 @@
 }
 
 #pragma mark - Decode
+
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    return ([NSData sd_imageFormatForImageData:data] == SDImageFormatGIF);
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    return (format == SDImageFormatGIF);
+}
+
 - (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
     if (!data) {
         return nil;

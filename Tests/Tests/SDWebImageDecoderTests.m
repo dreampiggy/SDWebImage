@@ -8,9 +8,9 @@
  */
 
 #import "SDTestCase.h"
-#import <SDWebImage/SDWebImageDecoder.h>
 #import <SDWebImage/SDWebImageImageIOCoder.h>
 #import <SDWebImage/SDWebImageWebPCoder.h>
+#import <SDWebImage/UIImage+ForceDecode.h>
 
 @interface SDWebImageDecoderTests : SDTestCase
 

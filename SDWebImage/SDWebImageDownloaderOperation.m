@@ -7,9 +7,9 @@
  */
 
 #import "SDWebImageDownloaderOperation.h"
-#import "SDWebImageDecoder.h"
 #import "SDWebImageManager.h"
 #import "NSImage+WebCache.h"
+#import "SDWebImageCodersManager.h"
 
 NSString *const SDWebImageDownloadStartNotification = @"SDWebImageDownloadStartNotification";
 NSString *const SDWebImageDownloadReceiveResponseNotification = @"SDWebImageDownloadReceiveResponseNotification";
@@ -322,21 +322,11 @@ didReceiveResponse:(NSURLResponse *)response
         SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
         const NSInteger totalSize = imageData.length;
         BOOL finished = (self.expectedSize == totalSize);
-        if ([self.imageCoder respondsToSelector:@selector(incrementalDecodedImageWithData:format:finished:)]) {
-            image = [self.imageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
-        } else {
-            self.imageCoder = [[SDWebImageDecoder alloc] init];
-            image = [self.imageCoder incrementalDecodedImageWithData:imageData format:format finished:finished];
-        }
+        image = [[SDWebImageCodersManager sharedInstance] incrementalDecodedImageWithData:imageData format:format finished:finished];
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
             if (self.shouldDecompressImages) {
-                if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
-                    image = [self.imageCoder decompressedImageWithImage:image data:&data format:format shouldScaleDown:NO];
-                } else {
-                    self.imageCoder = [[SDWebImageDecoder alloc] init];
-                    image = [self.imageCoder decompressedImageWithImage:image data:&data format:format shouldScaleDown:NO];
-                }
+                image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data format:format shouldScaleDown:NO];
             }
             image = SDScaledImageForKey(key, image);
             
@@ -404,24 +394,14 @@ didReceiveResponse:(NSURLResponse *)response
                 }
                 
                 SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
-                if ([self.imageCoder respondsToSelector:@selector(decodedImageWithData:format:)]) {
-                    image = [self.imageCoder decodedImageWithData:imageData format:format];
-                } else {
-                    self.imageCoder = [[SDWebImageDecoder alloc] init];
-                    image = [self.imageCoder decodedImageWithData:imageData format:format];
-                }
+                image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:imageData format:format];
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
                 image = SDScaledImageForKey(key, image);
                 
                 // Do not force decoding animated GIFs
                 if (!image.images && self.shouldDecompressImages) {
                     BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
-                    if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
-                        image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
-                    } else {
-                        self.imageCoder = [[SDWebImageDecoder alloc] init];
-                        image = [self.imageCoder decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
-                    }
+                    image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
                     [self.imageData setData:imageData];
                 }
                 if (CGSizeEqualToSize(image.size, CGSizeZero)) {

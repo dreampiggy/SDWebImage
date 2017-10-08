@@ -11,6 +11,14 @@
 
 @implementation SDWebImageTestDecoder
 
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    return YES;
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    return YES;
+}
+
 - (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
     NSString * testImagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestImage" ofType:@"jpg"];
     UIImage *image = [UIImage imageWithContentsOfFile:testImagePath];

@@ -194,7 +194,8 @@ NSString *kImageTestKey = @"TestImageKey.jpg";
 - (void)test40InsertionOfImageData {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Insertion of image data works"];
     
-    NSData *imageData = [NSData dataWithContentsOfFile:[self testImagePath]];
+    UIImage *image = [UIImage imageWithContentsOfFile:[self testImagePath]];
+    NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
     [self.sharedImageCache storeImageDataToDisk:imageData forKey:kImageTestKey];
     
     UIImage *storedImageFromMemory = [self.sharedImageCache imageFromMemoryCacheForKey:kImageTestKey];

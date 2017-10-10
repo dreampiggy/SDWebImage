@@ -325,7 +325,7 @@ didReceiveResponse:(NSURLResponse *)response
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
             if (self.shouldDecompressImages) {
-                image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data shouldScaleDown:NO];
+                image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data options:@{@"SDWebImageScaleDownLargeImages": @(NO)}];
             }
             image = SDScaledImageForKey(key, image);
             
@@ -399,7 +399,7 @@ didReceiveResponse:(NSURLResponse *)response
                 // Do not force decoding animated GIFs
                 if (!image.images && self.shouldDecompressImages) {
                     BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
-                    image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&imageData shouldScaleDown:shouldScaleDown];
+                    image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&imageData options:@{@"SDWebImageScaleDownLargeImages": @(shouldScaleDown)}];
                     [self.imageData setData:imageData];
                 }
                 if (CGSizeEqualToSize(image.size, CGSizeZero)) {

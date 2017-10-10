@@ -180,11 +180,21 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
 #if SD_MAC
     return image;
 #endif
 #if SD_UIKIT || SD_WATCH
+    BOOL shouldScaleDown = NO;
+    if (optionsDict != nil) {
+        NSNumber *scaleDownLargeImagesOption = nil;
+        if ([optionsDict[@"SDWebImageScaleDownLargeImages"] isKindOfClass:[NSNumber class]]) {
+            scaleDownLargeImagesOption = (NSNumber *)optionsDict[@"SDWebImageScaleDownLargeImages"];
+        }
+        if (scaleDownLargeImagesOption != nil) {
+            shouldScaleDown = [scaleDownLargeImagesOption boolValue];
+        }
+    }
     if (!shouldScaleDown) {
         return [self sd_decompressedImageWithImage:image];
     } else {

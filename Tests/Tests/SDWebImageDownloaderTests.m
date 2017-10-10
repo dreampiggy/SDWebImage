@@ -370,7 +370,7 @@
         NSString *str1 = @"TestDecompress";
         NSString *str2 = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if (![str1 isEqualToString:str2]) {
-            XCTFail(@"The image data is not modified by the custom decoder, check -[SDWebImageTestDecoder decompressedImageWithImage:data:shouldScaleDown:]");
+            XCTFail(@"The image data is not modified by the custom decoder, check -[SDWebImageTestDecoder decompressedImageWithImage:data:options:]");
         }
         [[SDWebImageCodersManager sharedInstance] removeCoder:testDecoder];
         [expectation fulfill];

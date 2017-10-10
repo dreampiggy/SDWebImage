@@ -107,13 +107,13 @@
     return nil;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     if (!image) {
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
         if ([coder canDecodeData:*data]) {
-            return [coder decompressedImageWithImage:image data:data shouldScaleDown:shouldScaleDown];
+            return [coder decompressedImageWithImage:image data:data options:optionsDict];
         }
     }
     return nil;

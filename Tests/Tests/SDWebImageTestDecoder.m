@@ -31,7 +31,7 @@
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     NSString *testString = @"TestDecompress";
     NSData *testData = [testString dataUsingEncoding:NSUTF8StringEncoding];
     *data = testData;

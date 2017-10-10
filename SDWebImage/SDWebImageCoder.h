@@ -59,10 +59,10 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 
  @param image The original image to be decompressed
  @param data The pointer to original image data. The pointer itself is nonnull but image data can be null. This data will set to cache if needed. If you do not need to modify data at the sametime, ignore this param.
- @param shouldScaleDown return YES if `SDWebImageScaleDownLargeImages` was set, otherwise return NO
+ @param optionsDict A dictionary containing any decompressing options. Pass {@"SDWebImageScaleDownLargeImages": @(YES)} to scale down large images
  @return The decompressed image
  */
-- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data shouldScaleDown:(BOOL)shouldScaleDown;
+- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict;
 
 /**
  Encode the image to image data

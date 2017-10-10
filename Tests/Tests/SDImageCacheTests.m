@@ -260,7 +260,7 @@ NSString *kImageTestKey = @"TestImageKey.jpg";
         NSData *data2 = UIImagePNGRepresentation(diskCacheImage);
         
         if (![data1 isEqualToData:data2]) {
-            XCTFail(@"Custom decoder not work for SDImageCache, check -[SDWebImageTestDecoder decodedImageWithData:format:]");
+            XCTFail(@"Custom decoder not work for SDImageCache, check -[SDWebImageTestDecoder decodedImageWithData:]");
         }
         
         [[SDWebImageCodersManager sharedInstance] removeCoder:testDecoder];

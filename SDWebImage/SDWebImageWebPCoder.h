@@ -11,10 +11,9 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
-@interface SDWebImageWebPCoder : NSObject <SDWebImageCoder>
+@interface SDWebImageWebPCoder : NSObject <SDWebImageProgressiveCoder>
 
 + (nonnull instancetype)sharedCoder;
-- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format finished:(BOOL)finished;
 
 @end
 

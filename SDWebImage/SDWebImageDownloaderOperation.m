@@ -319,14 +319,13 @@ didReceiveResponse:(NSURLResponse *)response
     if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0) {
         UIImage *image;
         NSData *imageData = [self.imageData copy];
-        SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
         const NSInteger totalSize = imageData.length;
         BOOL finished = (self.expectedSize == totalSize);
-        image = [[SDWebImageCodersManager sharedInstance] incrementalDecodedImageWithData:imageData format:format finished:finished];
+        image = [[SDWebImageCodersManager sharedInstance] incrementalDecodedImageWithData:imageData finished:finished];
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
             if (self.shouldDecompressImages) {
-                image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data format:format shouldScaleDown:NO];
+                image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data shouldScaleDown:NO];
             }
             image = SDScaledImageForKey(key, image);
             
@@ -393,15 +392,14 @@ didReceiveResponse:(NSURLResponse *)response
                     }
                 }
                 
-                SDImageFormat format = [NSData sd_imageFormatForImageData:imageData];
-                image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:imageData format:format];
+                image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:imageData];
                 NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
                 image = SDScaledImageForKey(key, image);
                 
                 // Do not force decoding animated GIFs
                 if (!image.images && self.shouldDecompressImages) {
                     BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
-                    image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&imageData format:format shouldScaleDown:shouldScaleDown];
+                    image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&imageData shouldScaleDown:shouldScaleDown];
                     [self.imageData setData:imageData];
                 }
                 if (CGSizeEqualToSize(image.size, CGSizeZero)) {

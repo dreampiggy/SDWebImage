@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
-@interface SDWebImageCodersManager : NSObject<SDWebImageCoder>
+@interface SDWebImageCodersManager : NSObject<SDWebImageProgressiveCoder>
 
 + (nonnull instancetype)sharedInstance;
 

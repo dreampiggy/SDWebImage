@@ -50,21 +50,19 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  Decode the image data to image.
 
  @param data The image data to be decoded
- @param format The recognized image format
  @return The decoded image from data
  */
-- (nullable UIImage *)decodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format;
+- (nullable UIImage *)decodedImageWithData:(nullable NSData *)data;
 
 /**
  Decompress the image with original image and image data
 
  @param image The original image to be decompressed
  @param data The pointer to original image data. The pointer itself is nonnull but image data can be null. This data will set to cache if needed. If you do not need to modify data at the sametime, ignore this param.
- @param format The recognized image format
  @param shouldScaleDown return YES if `SDWebImageScaleDownLargeImages` was set, otherwise return NO
  @return The decompressed image
  */
-- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown;
+- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data shouldScaleDown:(BOOL)shouldScaleDown;
 
 /**
  Encode the image to image data
@@ -75,17 +73,19 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  */
 - (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format;
 
-@optional
+@end
+
+/// Using this protocol instead of an optional method inside `SDWebImageCoder`
+@protocol SDWebImageProgressiveCoder <SDWebImageCoder>
 
 /**
  Incremental(Progressive) decode the image data to image.
  
  @param data The image data has been downloaded so far
- @param format The recognized image format
  @param finished Whether the download has finished
  @warning because incremental decoding need keep the data inside, we will alloc a new instance for each download operation to avoid conflicts
  @return The decoded image from data
  */
-- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format finished:(BOOL)finished;
+- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data finished:(BOOL)finished;
 
 @end

@@ -17,7 +17,7 @@
     if (!data) {
         return nil;
     }
-    return [[SDWebImageGIFCoder sharedCoder] decodedImageWithData:data format:SDImageFormatGIF];
+    return [[SDWebImageGIFCoder sharedCoder] decodedImageWithData:data];
 }
 
 - (BOOL)isGIF {

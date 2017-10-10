@@ -22,7 +22,7 @@
     if (!data) {
         return nil;
     }
-    return [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:data format:SDImageFormatWebP];
+    return [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:data];
 }
 
 @end

@@ -365,12 +365,12 @@
         NSData *data1 = UIImagePNGRepresentation(testJPEGImage);
         NSData *data2 = UIImagePNGRepresentation(image);
         if (![data1 isEqualToData:data2]) {
-            XCTFail(@"The image data is not equal to cutom decoder, check -[SDWebImageTestDecoder decodedImageWithData:format:]");
+            XCTFail(@"The image data is not equal to cutom decoder, check -[SDWebImageTestDecoder decodedImageWithData:]");
         }
         NSString *str1 = @"TestDecompress";
         NSString *str2 = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if (![str1 isEqualToString:str2]) {
-            XCTFail(@"The image data is not modified by the custom decoder, check -[SDWebImageTestDecoder decompressedImageWithImage:data:format:shouldScaleDown:]");
+            XCTFail(@"The image data is not modified by the custom decoder, check -[SDWebImageTestDecoder decompressedImageWithImage:data:shouldScaleDown:]");
         }
         [[SDWebImageCodersManager sharedInstance] removeCoder:testDecoder];
         [expectation fulfill];

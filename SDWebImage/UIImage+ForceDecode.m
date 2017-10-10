@@ -16,7 +16,7 @@
         return nil;
     }
     NSData *tempData;
-    return [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&tempData format:SDImageFormatUndefined shouldScaleDown:NO];
+    return [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&tempData shouldScaleDown:NO];
 }
 
 + (UIImage *)decodedAndScaledDownImageWithImage:(UIImage *)image {
@@ -24,7 +24,7 @@
         return nil;
     }
     NSData *tempData;
-    return [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&tempData format:SDImageFormatUndefined shouldScaleDown:YES];
+    return [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&tempData shouldScaleDown:YES];
 }
 
 @end

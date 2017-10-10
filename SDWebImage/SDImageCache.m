@@ -343,12 +343,11 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
     NSData *data = [self diskImageDataBySearchingAllPathsForKey:key];
     if (data) {
         UIImage *image;
-        SDImageFormat imageFormat = [NSData sd_imageFormatForImageData:data];
-        image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:data format:imageFormat];
+        image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:data];
         
         image = SDScaledImageForKey(key, image);
         if (self.config.shouldDecompressImages) {
-            image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data format:imageFormat shouldScaleDown:NO];
+            image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data shouldScaleDown:NO];
         }
         return image;
     } else {

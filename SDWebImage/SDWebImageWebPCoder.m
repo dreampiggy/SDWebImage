@@ -55,7 +55,7 @@
     return (format == SDImageFormatWebP);
 }
 
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+- (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;
     }
@@ -177,7 +177,7 @@
     return finalImage;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data format:(SDImageFormat)format finished:(BOOL)finished {
+- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     if (!_idec) {
         // Progressive images need transparent, so always use premultiplied RGBA
         _idec = WebPINewRGB(MODE_rgbA, NULL, 0, 0);
@@ -247,7 +247,7 @@
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data shouldScaleDown:(BOOL)shouldScaleDown {
     // WebP do not decompress
     return image;
 }

@@ -97,7 +97,7 @@
 - (void)test09ThatStaticWebPCoderWorks {
     NSURL *staticWebPURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImageStatic" withExtension:@"webp"];
     NSData *staticWebPData = [NSData dataWithContentsOfURL:staticWebPURL];
-    UIImage *staticWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:staticWebPData format:SDImageFormatWebP];
+    UIImage *staticWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:staticWebPData];
     expect(staticWebPImage).toNot.beNil();
     
     NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:staticWebPImage format:SDImageFormatWebP];
@@ -107,7 +107,7 @@
 - (void)test10ThatAnimatedWebPCoderWorks {
     NSURL *animatedWebPURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImageAnimated" withExtension:@"webp"];
     NSData *animatedWebPData = [NSData dataWithContentsOfURL:animatedWebPURL];
-    UIImage *animatedWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:animatedWebPData format:SDImageFormatWebP];
+    UIImage *animatedWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:animatedWebPData];
     expect(animatedWebPImage).toNot.beNil();
     expect(animatedWebPImage.images.count).to.beGreaterThan(0);
     CGSize imageSize = animatedWebPImage.size;

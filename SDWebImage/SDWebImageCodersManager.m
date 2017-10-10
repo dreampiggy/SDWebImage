@@ -95,25 +95,25 @@
     return NO;
 }
 
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+- (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
         if ([coder canDecodeData:data]) {
-            return [coder decodedImageWithData:data format:format];
+            return [coder decodedImageWithData:data];
         }
     }
     return nil;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data shouldScaleDown:(BOOL)shouldScaleDown {
     if (!image) {
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
         if ([coder canDecodeData:*data]) {
-            return [coder decompressedImageWithImage:image data:data format:format shouldScaleDown:shouldScaleDown];
+            return [coder decompressedImageWithImage:image data:data shouldScaleDown:shouldScaleDown];
         }
     }
     return nil;
@@ -131,13 +131,14 @@
     return nil;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data format:(SDImageFormat)format finished:(BOOL)finished {
+- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     if (!data) {
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
-        if ([coder canDecodeData:data] && [coder respondsToSelector:@selector(incrementalDecodedImageWithData:format:finished:)]) {
-            return [coder incrementalDecodedImageWithData:data format:format finished:finished];
+        if ([coder canDecodeData:data] && [coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)]) {
+            id<SDWebImageProgressiveCoder> progressiveCoder = (id<SDWebImageProgressiveCoder>)coder;
+            return [progressiveCoder incrementalDecodedImageWithData:data finished:finished];
         }
     }
     return nil;

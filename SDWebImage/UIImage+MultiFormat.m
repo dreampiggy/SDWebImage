@@ -28,8 +28,7 @@
 }
 
 + (nullable UIImage *)sd_imageWithData:(nullable NSData *)data {
-    SDImageFormat format = [NSData sd_imageFormatForImageData:data];
-    return [[SDWebImageCodersManager sharedInstance] decodedImageWithData:data format:format];
+    return [[SDWebImageCodersManager sharedInstance] decodedImageWithData:data];
 }
 
 - (nullable NSData *)sd_imageData {

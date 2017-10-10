@@ -85,7 +85,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     }
 }
 
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+- (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;
     }
@@ -103,7 +103,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     return image;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data format:(SDImageFormat)format finished:(BOOL)finished {
+- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     if (!_imageSource) {
         _imageSource = CGImageSourceCreateIncremental(NULL);
     }
@@ -180,7 +180,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data shouldScaleDown:(BOOL)shouldScaleDown {
 #if SD_MAC
     return image;
 #endif

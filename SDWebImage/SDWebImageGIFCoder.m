@@ -31,7 +31,7 @@
     return (format == SDImageFormatGIF);
 }
 
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+- (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;
     }
@@ -73,7 +73,7 @@
 #endif
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data shouldScaleDown:(BOOL)shouldScaleDown {
     // GIF do not decompress
     return image;
 }

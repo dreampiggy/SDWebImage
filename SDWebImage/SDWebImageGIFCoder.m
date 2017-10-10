@@ -79,7 +79,12 @@
 }
 
 #pragma mark - Encode
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
+    return nil;
+}
+
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
+    // not supported
     return nil;
 }
 

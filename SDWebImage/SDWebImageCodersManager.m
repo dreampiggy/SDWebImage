@@ -119,13 +119,27 @@
     return nil;
 }
 
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
     if (!image) {
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
         if ([coder canEncodeImageFormat:format]) {
-            return [coder encodedDataWithImage:image format:format];
+            return [coder encodedDataWithImage:image format:format properties:properties];
+        }
+    }
+    return nil;
+}
+
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
+    if (!data) {
+        return nil;
+    }
+    
+    for (id<SDWebImageCoder> coder in self.coders) {
+        // we can use `canDecodeData` here since we are dealling with NSData, even though this is part of the encoding process
+        if ([coder canDecodeData:data]) {
+            return [coder propertiesOfImageData:data];
         }
     }
     return nil;

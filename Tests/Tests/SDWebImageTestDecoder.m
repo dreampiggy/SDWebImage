@@ -39,10 +39,14 @@
     return image;
 }
 
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
     NSString *testString = @"TestEncode";
     NSData *data = [testString dataUsingEncoding:NSUTF8StringEncoding];
     return data;
+}
+
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
+    return nil;
 }
 
 @end

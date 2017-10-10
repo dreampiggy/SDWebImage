@@ -100,7 +100,7 @@
     UIImage *staticWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:staticWebPData];
     expect(staticWebPImage).toNot.beNil();
     
-    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:staticWebPImage format:SDImageFormatWebP];
+    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:staticWebPImage format:SDImageFormatWebP properties:nil];
     expect(outputData).toNot.beNil();
 }
 
@@ -120,7 +120,7 @@
         expect(imageScale).to.equal(scale);
     }];
     
-    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:animatedWebPImage format:SDImageFormatWebP];
+    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:animatedWebPImage format:SDImageFormatWebP properties:nil];
     expect(outputData).toNot.beNil();
 }
 

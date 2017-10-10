@@ -69,9 +69,18 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 
  @param image The image to be encoded
  @param format The image format to encode, you should note `SDImageFormatUndefined` format is also  possible
+ @param properties The image properties (which can lost from the `UIImage` instance)
  @return The encoded image data
  */
-- (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format;
+- (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties;
+
+/**
+ Returns the image properties extracted directly from the `NSData`. These properties will accompany the `UIImage`
+
+ @param data The input image as data
+ @return The dictionary of image properties
+ */
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data;
 
 @end
 

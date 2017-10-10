@@ -192,6 +192,7 @@ NSString *kImageTestKey = @"TestImageKey.jpg";
 // TODO -- Testing image data insertion
 
 - (void)test40InsertionOfImageData {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Insertion of image data works"];
     
     NSData *imageData = [NSData dataWithContentsOfFile:[self testImagePath]];
     [self.sharedImageCache storeImageDataToDisk:imageData forKey:kImageTestKey];
@@ -201,21 +202,34 @@ NSString *kImageTestKey = @"TestImageKey.jpg";
     
     NSString *cachePath = [self.sharedImageCache defaultCachePathForKey:kImageTestKey];
     NSData *storedImageData = [NSData dataWithContentsOfFile:cachePath];
-    expect([storedImageData isEqualToData:imageData]).will.beTruthy;
+    expect(storedImageData).to.equal(imageData);
+    
+    __block int blocksCalled = 0;
     
     [self.sharedImageCache diskImageExistsWithKey:kImageTestKey completion:^(BOOL isInCache) {
         expect(isInCache).to.equal(YES);
+        blocksCalled += 1;
+        if (blocksCalled == 2) {
+            [expectation fulfill];
+        }
     }];
     
     [self.sharedImageCache calculateSizeWithCompletionBlock:^(NSUInteger fileCount, NSUInteger totalSize) {
         expect(fileCount).to.beLessThan(100);
+        blocksCalled += 1;
+        if (blocksCalled == 2) {
+            [expectation fulfill];
+        }
     }];
+    
+    [self waitForExpectationsWithCommonTimeout];
 }
 
 - (void)test41ThatCustomDecoderWorksForImageCache {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Custom decoder for SDImageCache not works"];
     SDImageCache *cache = [[SDImageCache alloc] initWithNamespace:@"TestDecode"];
-    [[SDWebImageCodersManager sharedInstance] addCoder:[[SDWebImageTestDecoder alloc] init]];
+    SDWebImageTestDecoder *testDecoder = [[SDWebImageTestDecoder alloc] init];
+    [[SDWebImageCodersManager sharedInstance] addCoder:testDecoder];
     NSString * testImagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestImage" ofType:@"png"];
     UIImage *image = [UIImage imageWithContentsOfFile:testImagePath];
     NSString *key = @"TestPNGImageEncodedToDataAndRetrieveToJPEG";
@@ -249,6 +263,7 @@ NSString *kImageTestKey = @"TestImageKey.jpg";
             XCTFail(@"Custom decoder not work for SDImageCache, check -[SDWebImageTestDecoder decodedImageWithData:format:]");
         }
         
+        [[SDWebImageCodersManager sharedInstance] removeCoder:testDecoder];
         [expectation fulfill];
     }];
     

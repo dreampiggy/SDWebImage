@@ -350,10 +350,11 @@
     [self waitForExpectationsWithCommonTimeout];
 }
 
-- (void)test22ThatCustomDeoderWorksForImageDownload {
+- (void)test22ThatCustomDecoderWorksForImageDownload {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Custom decoder for SDWebImageDownloader not works"];
     SDWebImageDownloader *downloader = [[SDWebImageDownloader alloc] init];
-    [[SDWebImageCodersManager sharedInstance] addCoder:[[SDWebImageTestDecoder alloc] init]];
+    SDWebImageTestDecoder *testDecoder = [[SDWebImageTestDecoder alloc] init];
+    [[SDWebImageCodersManager sharedInstance] addCoder:testDecoder];
     NSURL * testImageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImage" withExtension:@"png"];
     
     // Decoded result is JPEG
@@ -371,6 +372,7 @@
         if (![str1 isEqualToString:str2]) {
             XCTFail(@"The image data is not modified by the custom decoder, check -[SDWebImageTestDecoder decompressedImageWithImage:data:format:shouldScaleDown:]");
         }
+        [[SDWebImageCodersManager sharedInstance] removeCoder:testDecoder];
         [expectation fulfill];
     }];
     

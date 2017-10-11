@@ -347,7 +347,7 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
         
         image = SDScaledImageForKey(key, image);
         if (self.config.shouldDecompressImages) {
-            image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data options:@{@"SDWebImageScaleDownLargeImages": @(NO)}];
+            image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data options:@{SDWebImageCoderScaleDownLargeImagesKey: @(NO)}];
         }
         return image;
     } else {

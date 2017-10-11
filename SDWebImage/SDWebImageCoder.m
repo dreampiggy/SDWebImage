@@ -8,6 +8,8 @@
 
 #import "SDWebImageCoder.h"
 
+NSString * const SDWebImageCoderScaleDownLargeImagesKey = @"scaleDownLargeImages";
+
 CGColorSpaceRef SDCGColorSpaceGetDeviceRGB(void) {
     static CGColorSpaceRef colorSpace;
     static dispatch_once_t onceToken;

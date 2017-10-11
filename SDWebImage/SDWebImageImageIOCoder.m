@@ -188,8 +188,8 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     BOOL shouldScaleDown = NO;
     if (optionsDict != nil) {
         NSNumber *scaleDownLargeImagesOption = nil;
-        if ([optionsDict[@"SDWebImageScaleDownLargeImages"] isKindOfClass:[NSNumber class]]) {
-            scaleDownLargeImagesOption = (NSNumber *)optionsDict[@"SDWebImageScaleDownLargeImages"];
+        if ([optionsDict[SDWebImageCoderScaleDownLargeImagesKey] isKindOfClass:[NSNumber class]]) {
+            scaleDownLargeImagesOption = (NSNumber *)optionsDict[SDWebImageCoderScaleDownLargeImagesKey];
         }
         if (scaleDownLargeImagesOption != nil) {
             shouldScaleDown = [scaleDownLargeImagesOption boolValue];

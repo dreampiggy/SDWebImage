@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCompat.h"
 #import "SDWebImageOperation.h"
-#import "SDWebImageCoder.h"
 
 typedef NS_OPTIONS(NSUInteger, SDWebImageDownloaderOptions) {
     SDWebImageDownloaderLowPriority = 1 << 0,
@@ -116,12 +115,6 @@ typedef SDHTTPHeadersDictionary * _Nullable (^SDWebImageDownloaderHeadersFilterB
  *  The timeout value (in seconds) for the download operation. Default: 15.0.
  */
 @property (assign, nonatomic) NSTimeInterval downloadTimeout;
-
-/**
- *  The custom image coder used for image decoding and encoding
- *  If the provided coder does not implement the protocol, the default coder will be used instead
- */
-@property (nonatomic, strong, nullable) id<SDWebImageCoder> imageCoder;
 
 /**
  * The configuration in use by the internal NSURLSession.

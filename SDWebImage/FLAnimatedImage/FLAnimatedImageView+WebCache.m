@@ -13,11 +13,6 @@
 #import "UIView+WebCacheOperation.h"
 #import "UIView+WebCache.h"
 #import "NSData+ImageContentType.h"
-#if __has_include(<FLAnimatedImage/FLAnimatedImage.h>)
-#import <FLAnimatedImage/FLAnimatedImage.h>
-#else
-#import "FLAnimatedImage.h"
-#endif
 #import "UIImageView+WebCache.h"
 
 @implementation FLAnimatedImageView (WebCache)

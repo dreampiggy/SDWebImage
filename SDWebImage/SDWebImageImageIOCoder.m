@@ -64,21 +64,9 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 }
 
 #pragma mark - Decode
-
 - (BOOL)canDecodeFromData:(nullable NSData *)data {
     switch ([NSData sd_imageFormatForImageData:data]) {
-        // Do not support GIF decoding
-        case SDImageFormatGIF:
-        case SDImageFormatWebP:
-            return NO;
-        default:
-            return YES;
-    }
-}
-
-- (BOOL)canEncodeToFormat:(SDImageFormat)format {
-    switch (format) {
-        // Do not support GIF encoding
+        // Do not support GIF and WebP decoding
         case SDImageFormatGIF:
         case SDImageFormatWebP:
             return NO;
@@ -192,7 +180,9 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image
+                                   data:(NSData *__autoreleasing  _Nullable *)data
+                                options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
 #if SD_MAC
     return image;
 #endif
@@ -380,6 +370,17 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 #endif
 
 #pragma mark - Encode
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
+    switch (format) {
+        // Do not support GIF and WebP encoding
+        case SDImageFormatGIF:
+        case SDImageFormatWebP:
+            return NO;
+        default:
+            return YES;
+    }
+}
+
 - (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
     if (!image) {
         return nil;

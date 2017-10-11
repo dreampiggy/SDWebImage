@@ -109,7 +109,9 @@
     return nil;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image
+                                   data:(NSData *__autoreleasing  _Nullable *)data
+                                options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     if (!image) {
         return nil;
     }

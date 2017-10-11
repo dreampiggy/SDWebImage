@@ -23,13 +23,8 @@
 }
 
 #pragma mark - Decode
-
 - (BOOL)canDecodeFromData:(nullable NSData *)data {
     return ([NSData sd_imageFormatForImageData:data] == SDImageFormatGIF);
-}
-
-- (BOOL)canEncodeToFormat:(SDImageFormat)format {
-    return (format == SDImageFormatGIF);
 }
 
 - (UIImage *)decodedImageWithData:(NSData *)data {
@@ -74,12 +69,18 @@
 #endif
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image
+                                   data:(NSData *__autoreleasing  _Nullable *)data
+                                options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     // GIF do not decompress
     return image;
 }
 
 #pragma mark - Encode
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
+    return (format == SDImageFormatGIF);
+}
+
 - (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
     if (!image) {
         return nil;

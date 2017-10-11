@@ -30,27 +30,21 @@ CG_EXTERN CGColorSpaceRef _Nonnull SDCGColorSpaceGetDeviceRGB(void);
  */
 CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 
+
 /**
  This is the image coder protocol to provide custom image decoding/encoding.
- Pay attention that these methods are not called from main queue.
+ @note Pay attention that these methods are not called from main queue.
  */
 @protocol SDWebImageCoder <NSObject>
 
+#pragma mark - Decoding
 /**
- Returns YES if this coder can decode some data. Otherwise, it should be passed to another coder.
+ Returns YES if this coder can decode some data. Otherwise, the data should be passed to another coder.
  
  @param data The image data so we can look at it
  @return YES if this coder can decode the data, NO otherwise
  */
 - (BOOL)canDecodeFromData:(nullable NSData *)data;
-
-/**
- Returns YES if this coder can encode some image. Otherwise, it should be passed to another coder.
- 
- @param format The image format
- @return YES if this coder can encode the image, NO otherwise
- */
-- (BOOL)canEncodeToFormat:(SDImageFormat)format;
 
 /**
  Decode the image data to image.
@@ -68,7 +62,19 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @param optionsDict A dictionary containing any decompressing options. Pass {SDWebImageCoderScaleDownLargeImagesKey: @(YES)} to scale down large images
  @return The decompressed image
  */
-- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict;
+- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image
+                                            data:(NSData * _Nullable * _Nonnull)data
+                                         options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict;
+
+#pragma mark - Encoding
+
+/**
+ Returns YES if this coder can encode some image. Otherwise, it should be passed to another coder.
+ 
+ @param format The image format
+ @return YES if this coder can encode the image, NO otherwise
+ */
+- (BOOL)canEncodeToFormat:(SDImageFormat)format;
 
 /**
  Encode the image to image data.
@@ -81,9 +87,10 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 
 @end
 
+
 /**
  This is the image coder protocol to provide custom progressive image decoding.
- Pay attention that these methods are not called from main queue.
+ @note Pay attention that these methods are not called from main queue.
  */
 @protocol SDWebImageProgressiveCoder <SDWebImageCoder>
 

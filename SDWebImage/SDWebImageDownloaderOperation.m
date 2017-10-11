@@ -328,16 +328,11 @@ didReceiveResponse:(NSURLResponse *)response
         
         if (!self.progressiveCoder) {
             // We need to create a new instance for progressive decoding to avoid conflicts
-            id<SDWebImageProgressiveCoder> progressiveCoder = (id<SDWebImageProgressiveCoder>)[[SDWebImageCodersManager sharedInstance] coderWithCondition:^BOOL(id<SDWebImageCoder>  _Nonnull coder) {
-                if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)]) {
-                    if ([((id<SDWebImageProgressiveCoder>)coder) canIncrementallyDecodeFromData:imageData]) {
-                        return YES;
-                    }
+            for (id<SDWebImageCoder>coder in [SDWebImageCodersManager sharedInstance].coders) {
+                if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)] &&
+                    [((id<SDWebImageProgressiveCoder>)coder) canIncrementallyDecodeFromData:imageData]) {
+                    self.progressiveCoder = [[[coder class] alloc] init];
                 }
-                return NO;
-            }];
-            if (progressiveCoder) {
-                self.progressiveCoder = [[[progressiveCoder class] alloc] init];
             }
         }
         

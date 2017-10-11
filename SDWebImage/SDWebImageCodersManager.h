@@ -10,9 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-typedef BOOL (^SDWebImageCodersConditionBlock)(id<SDWebImageCoder> coder);
+typedef BOOL (^SDWebImageCodersConditionBlock)(_Nonnull id<SDWebImageCoder> coder);
 
 @interface SDWebImageCodersManager : NSObject<SDWebImageCoder>
 
@@ -44,8 +42,6 @@ typedef BOOL (^SDWebImageCodersConditionBlock)(id<SDWebImageCoder> coder);
  @param conditionBlock Return YES to specify the current coder is chosen.
  @return The coder which pass the condition
  */
-- (nullable id<SDWebImageCoder>)coderWithCondition:(SDWebImageCodersConditionBlock)conditionBlock;
+- (nullable id<SDWebImageCoder>)coderWithCondition:(nonnull SDWebImageCodersConditionBlock)conditionBlock;
 
 @end
-
-NS_ASSUME_NONNULL_END

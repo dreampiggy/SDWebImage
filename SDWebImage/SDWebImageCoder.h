@@ -10,19 +10,17 @@
 #import "SDWebImageCompat.h"
 #import "NSData+ImageContentType.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 /**
  A Boolean value indicating whether to scale down large images during decompressing. (NSNumber)
  */
-FOUNDATION_EXPORT NSString * const SDWebImageCoderScaleDownLargeImagesKey;
+FOUNDATION_EXPORT NSString * _Nonnull const SDWebImageCoderScaleDownLargeImagesKey;
 
 /**
  Return the shared device-dependent RGB color space created with CGColorSpaceCreateDeviceRGB.
 
  @return The device-dependent RGB color space
  */
-CG_EXTERN CGColorSpaceRef SDCGColorSpaceGetDeviceRGB(void);
+CG_EXTERN CGColorSpaceRef _Nonnull SDCGColorSpaceGetDeviceRGB(void);
 
 /**
  Check whether CGImageRef contains alpha channel.
@@ -100,5 +98,3 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 - (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data finished:(BOOL)finished;
 
 @end
-
-NS_ASSUME_NONNULL_END

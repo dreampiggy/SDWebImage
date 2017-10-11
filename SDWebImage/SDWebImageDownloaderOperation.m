@@ -328,7 +328,7 @@ didReceiveResponse:(NSURLResponse *)response
         
         if (!self.progressiveCoder) {
             // We need to create a new instance for progressive decoding to avoid conflicts
-            self.progressiveCoder = (id<SDWebImageProgressiveCoder>)[[SDWebImageCodersManager sharedInstance] coderWithCondition:^BOOL(id<SDWebImageCoder>  _Nonnull coder) {
+            id<SDWebImageProgressiveCoder> progressiveCoder = (id<SDWebImageProgressiveCoder>)[[SDWebImageCodersManager sharedInstance] coderWithCondition:^BOOL(id<SDWebImageCoder>  _Nonnull coder) {
                 if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)]) {
                     if ([coder canDecodeData:imageData]) {
                         return YES;
@@ -336,6 +336,9 @@ didReceiveResponse:(NSURLResponse *)response
                 }
                 return NO;
             }];
+            if (progressiveCoder) {
+                self.progressiveCoder = [[[progressiveCoder class] alloc] init];
+            }
         }
         
         UIImage *image = [self.progressiveCoder incrementalDecodedImageWithData:imageData finished:finished];

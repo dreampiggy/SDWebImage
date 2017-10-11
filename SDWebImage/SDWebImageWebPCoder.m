@@ -46,13 +46,8 @@
 }
 
 #pragma mark - Decode
-
 - (BOOL)canDecodeFromData:(nullable NSData *)data {
     return ([NSData sd_imageFormatForImageData:data] == SDImageFormatWebP);
-}
-
-- (BOOL)canEncodeToFormat:(SDImageFormat)format {
-    return (format == SDImageFormatWebP);
 }
 
 - (BOOL)canIncrementallyDecodeFromData:(NSData *)data {
@@ -249,7 +244,9 @@
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image
+                                   data:(NSData *__autoreleasing  _Nullable *)data
+                                options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     // WebP do not decompress
     return image;
 }
@@ -364,6 +361,9 @@
 }
 
 #pragma mark - Encode
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
+    return (format == SDImageFormatWebP);
+}
 
 - (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
     if (!image) {

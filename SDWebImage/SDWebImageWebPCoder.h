@@ -11,6 +11,9 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
+/**
+ Built in coder that supports WebP and animated WebP
+ */
 @interface SDWebImageWebPCoder : NSObject <SDWebImageProgressiveCoder>
 
 + (nonnull instancetype)sharedCoder;

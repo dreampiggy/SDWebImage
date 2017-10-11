@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
+/**
+ Built in coder that supports GIF
+ */
 @interface SDWebImageGIFCoder : NSObject <SDWebImageCoder>
 
 + (nonnull instancetype)sharedCoder;

@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
+/**
+ Built in coder that supports PNG, JPEG, TIFF, includes support for progressive decoding
+ */
 @interface SDWebImageImageIOCoder : NSObject <SDWebImageProgressiveCoder>
 
 + (nonnull instancetype)sharedCoder;

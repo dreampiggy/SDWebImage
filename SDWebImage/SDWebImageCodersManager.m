@@ -92,18 +92,18 @@
 }
 
 #pragma mark - SDWebImageCoder
-- (BOOL)canDecodeData:(NSData *)data {
+- (BOOL)canDecodeFromData:(NSData *)data {
     for (id<SDWebImageCoder> coder in self.coders) {
-        if ([coder canDecodeData:data]) {
+        if ([coder canDecodeFromData:data]) {
             return YES;
         }
     }
     return NO;
 }
 
-- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
     for (id<SDWebImageCoder> coder in self.coders) {
-        if ([coder canEncodeImageFormat:format]) {
+        if ([coder canEncodeToFormat:format]) {
             return YES;
         }
     }
@@ -115,7 +115,7 @@
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
-        if ([coder canDecodeData:data]) {
+        if ([coder canDecodeFromData:data]) {
             return [coder decodedImageWithData:data];
         }
     }
@@ -127,7 +127,7 @@
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
-        if ([coder canDecodeData:*data]) {
+        if ([coder canDecodeFromData:*data]) {
             return [coder decompressedImageWithImage:image data:data options:optionsDict];
         }
     }
@@ -139,7 +139,7 @@
         return nil;
     }
     for (id<SDWebImageCoder> coder in self.coders) {
-        if ([coder canEncodeImageFormat:format]) {
+        if ([coder canEncodeToFormat:format]) {
             return [coder encodedDataWithImage:image format:format];
         }
     }

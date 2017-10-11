@@ -24,11 +24,11 @@
 
 #pragma mark - Decode
 
-- (BOOL)canDecodeData:(nullable NSData *)data {
+- (BOOL)canDecodeFromData:(nullable NSData *)data {
     return ([NSData sd_imageFormatForImageData:data] == SDImageFormatGIF);
 }
 
-- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
     return (format == SDImageFormatGIF);
 }
 

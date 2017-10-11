@@ -42,7 +42,7 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @param data The image data so we can look at it
  @return YES if this coder can decode the data, NO otherwise
  */
-- (BOOL)canDecodeData:(nullable NSData *)data;
+- (BOOL)canDecodeFromData:(nullable NSData *)data;
 
 /**
  Returns YES if this coder can encode some image. Otherwise, it should be passed to another coder.
@@ -50,7 +50,7 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @param format The image format
  @return YES if this coder can encode the image, NO otherwise
  */
-- (BOOL)canEncodeImageFormat:(SDImageFormat)format;
+- (BOOL)canEncodeToFormat:(SDImageFormat)format;
 
 /**
  Decode the image data to image.
@@ -93,7 +93,7 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @param data The image data so we can look at it
  @return YES if this coder can decode the data, NO otherwise
  */
-- (BOOL)canIncrementalDecodeData:(nullable NSData *)data;
+- (BOOL)canIncrementallyDecodeFromData:(nullable NSData *)data;
 
 /**
  Incremental decode the image data to image.
@@ -103,6 +103,6 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
  @warning because incremental decoding need to keep the decoded context, we will alloc a new instance with the same class for each download operation to avoid conflicts
  @return The decoded image from data
  */
-- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data finished:(BOOL)finished;
+- (nullable UIImage *)incrementallyDecodedImageWithData:(nullable NSData *)data finished:(BOOL)finished;
 
 @end

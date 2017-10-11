@@ -330,7 +330,7 @@ didReceiveResponse:(NSURLResponse *)response
             // We need to create a new instance for progressive decoding to avoid conflicts
             id<SDWebImageProgressiveCoder> progressiveCoder = (id<SDWebImageProgressiveCoder>)[[SDWebImageCodersManager sharedInstance] coderWithCondition:^BOOL(id<SDWebImageCoder>  _Nonnull coder) {
                 if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)]) {
-                    if ([((id<SDWebImageProgressiveCoder>)coder) canIncrementalDecodeData:imageData]) {
+                    if ([((id<SDWebImageProgressiveCoder>)coder) canIncrementallyDecodeFromData:imageData]) {
                         return YES;
                     }
                 }
@@ -341,7 +341,7 @@ didReceiveResponse:(NSURLResponse *)response
             }
         }
         
-        UIImage *image = [self.progressiveCoder incrementalDecodedImageWithData:imageData finished:finished];
+        UIImage *image = [self.progressiveCoder incrementallyDecodedImageWithData:imageData finished:finished];
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
             image = [self scaledImageForKey:key image:image];

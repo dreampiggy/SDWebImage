@@ -48,6 +48,8 @@
     SDDispatchQueueRelease(_mutableCodersAccessQueue);
 }
 
+#pragma mark - Coder IO operations
+
 - (void)addCoder:(nonnull id<SDWebImageCoder>)coder {
     if ([coder conformsToProtocol:@protocol(SDWebImageCoder)]) {
         dispatch_barrier_sync(self.mutableCodersAccessQueue, ^{
@@ -74,15 +76,6 @@
     dispatch_barrier_sync(self.mutableCodersAccessQueue, ^{
         self.mutableCoders = [coders mutableCopy];
     });
-}
-
-- (id<SDWebImageCoder>)coderWithCondition:(SDWebImageCodersConditionBlock)conditionBlock {
-    for (id<SDWebImageCoder> coder in self.coders) {
-        if (conditionBlock && conditionBlock(coder)) {
-            return coder;
-        }
-    }
-    return nil;
 }
 
 #pragma mark - SDWebImageCoder

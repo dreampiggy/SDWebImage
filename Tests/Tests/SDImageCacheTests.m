@@ -248,7 +248,7 @@ NSString *kImageTestKey = @"TestImageKey.jpg";
         NSString *str1 = @"TestEncode";
         NSString *str2 = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if (![str1 isEqualToString:str2]) {
-            XCTFail(@"Custom decoder not work for SDImageCache, check -[SDWebImageTestDecoder encodedDataWithImage:format:properties:]");
+            XCTFail(@"Custom decoder not work for SDImageCache, check -[SDWebImageTestDecoder encodedDataWithImage:format:]");
         }
         
         UIImage *diskCacheImage = [cache imageFromDiskCacheForKey:key];

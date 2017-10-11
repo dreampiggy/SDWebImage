@@ -363,7 +363,7 @@
 
 #pragma mark - Encode
 
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
     if (!image) {
         return nil;
     }
@@ -420,11 +420,6 @@
 #endif
     
     return data;
-}
-
-- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
-    // not supported
-    return nil;
 }
 
 - (nullable NSData *)sd_encodedWebpDataWithImage:(nullable UIImage *)image {

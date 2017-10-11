@@ -217,11 +217,8 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
             @autoreleasepool {
                 NSData *data = imageData;
                 if (!data && image) {
-                    // TODO: check this. Looks wrong to me (bpoplauschi). data is nil and then we try to get the imageFormat and properties from that nil data WTF
-                    
-                    SDImageFormat imageFormatFromData = [NSData sd_imageFormatForImageData:data];
-                    NSDictionary *properties = [[SDWebImageCodersManager sharedInstance] propertiesOfImageData:data];
-                    data = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:image format:imageFormatFromData properties:properties];
+                    // If we do not have any data to detect image format, use PNG format
+                    data = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:image format:SDImageFormatPNG];
                 }
                 [self storeImageDataToDisk:data forKey:key];
             }

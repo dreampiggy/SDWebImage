@@ -7,6 +7,7 @@
  */
 
 #import "SDWebImageGIFCoder.h"
+#import "NSImage+WebCache.h"
 #import <ImageIO/ImageIO.h>
 #import "NSData+ImageContentType.h"
 
@@ -79,13 +80,37 @@
 }
 
 #pragma mark - Encode
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
-    return nil;
-}
-
-- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
-    // not supported
-    return nil;
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+    if (!image) {
+        return nil;
+    }
+    
+    if (format != SDImageFormatGIF) {
+        return nil;
+    }
+    
+    NSMutableData *imageData = [NSMutableData data];
+    CFStringRef imageUTType = [NSData sd_UTTypeFromSDImageFormat:format];
+    
+    // Create an image destination.
+    CGImageDestinationRef imageDestination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)imageData, imageUTType, 1, NULL);
+    if (!imageDestination) {
+        // Handle failure.
+        return nil;
+    }
+    
+    // Add your image to the destination.
+    CGImageDestinationAddImage(imageDestination, image.CGImage, nil);
+    
+    // Finalize the destination.
+    if (CGImageDestinationFinalize(imageDestination) == NO) {
+        // Handle failure.
+        imageData = nil;
+    }
+    
+    CFRelease(imageDestination);
+    
+    return [imageData copy];
 }
 
 @end

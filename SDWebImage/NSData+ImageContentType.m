@@ -63,8 +63,8 @@
             UTType = kUTTypeTIFF;
             break;
         default:
-            // default is kUTTypePDF
-            UTType = kUTTypePDF;
+            // default is kUTTypePNG
+            UTType = kUTTypePNG;
             break;
     }
     return UTType;

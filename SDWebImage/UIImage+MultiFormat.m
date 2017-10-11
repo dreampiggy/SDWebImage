@@ -38,7 +38,7 @@
 - (nullable NSData *)sd_imageDataAsFormat:(SDImageFormat)imageFormat {
     NSData *imageData = nil;
     if (self) {
-        imageData = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:self format:imageFormat properties:nil];
+        imageData = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:self format:imageFormat];
     }
     return imageData;
 }

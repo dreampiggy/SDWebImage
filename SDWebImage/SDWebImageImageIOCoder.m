@@ -65,7 +65,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 
 #pragma mark - Decode
 
-- (BOOL)canDecodeData:(nullable NSData *)data {
+- (BOOL)canDecodeFromData:(nullable NSData *)data {
     switch ([NSData sd_imageFormatForImageData:data]) {
         // Do not support GIF decoding
         case SDImageFormatGIF:
@@ -76,7 +76,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     }
 }
 
-- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
     switch (format) {
         // Do not support GIF encoding
         case SDImageFormatGIF:
@@ -87,7 +87,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     }
 }
 
-- (BOOL)canIncrementalDecodeData:(NSData *)data {
+- (BOOL)canIncrementallyDecodeFromData:(NSData *)data {
     switch ([NSData sd_imageFormatForImageData:data]) {
         // Support static GIF progressive decoding
         case SDImageFormatWebP:
@@ -115,7 +115,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     return image;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
+- (UIImage *)incrementallyDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     if (!_imageSource) {
         _imageSource = CGImageSourceCreateIncremental(NULL);
     }

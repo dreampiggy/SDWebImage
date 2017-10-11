@@ -11,11 +11,11 @@
 
 @implementation SDWebImageTestDecoder
 
-- (BOOL)canDecodeData:(nullable NSData *)data {
+- (BOOL)canDecodeFromData:(nullable NSData *)data {
     return YES;
 }
 
-- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
     return YES;
 }
 
@@ -25,7 +25,7 @@
     return image;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
+- (UIImage *)incrementallyDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     NSString * testImagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestImage" ofType:@"gif"];
     UIImage *image = [UIImage imageWithContentsOfFile:testImagePath];
     return image;

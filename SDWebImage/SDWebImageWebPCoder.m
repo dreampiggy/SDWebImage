@@ -47,15 +47,15 @@
 
 #pragma mark - Decode
 
-- (BOOL)canDecodeData:(nullable NSData *)data {
+- (BOOL)canDecodeFromData:(nullable NSData *)data {
     return ([NSData sd_imageFormatForImageData:data] == SDImageFormatWebP);
 }
 
-- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+- (BOOL)canEncodeToFormat:(SDImageFormat)format {
     return (format == SDImageFormatWebP);
 }
 
-- (BOOL)canIncrementalDecodeData:(NSData *)data {
+- (BOOL)canIncrementallyDecodeFromData:(NSData *)data {
     return ([NSData sd_imageFormatForImageData:data] == SDImageFormatWebP);
 }
 
@@ -179,7 +179,7 @@
     return finalImage;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
+- (UIImage *)incrementallyDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     if (!_idec) {
         // Progressive images need transparent, so always use premultiplied RGBA
         _idec = WebPINewRGB(MODE_rgbA, NULL, 0, 0);

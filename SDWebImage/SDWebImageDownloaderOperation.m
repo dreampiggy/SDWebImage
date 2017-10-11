@@ -317,17 +317,20 @@ didReceiveResponse:(NSURLResponse *)response
     [self.imageData appendData:data];
 
     if ((self.options & SDWebImageDownloaderProgressiveDownload) && self.expectedSize > 0) {
-        UIImage *image;
+        // Get the image data
         NSData *imageData = [self.imageData copy];
+        // Get the total bytes downloaded
         const NSInteger totalSize = imageData.length;
-        BOOL finished = (self.expectedSize == totalSize);
-        image = [[SDWebImageCodersManager sharedInstance] incrementalDecodedImageWithData:imageData finished:finished];
+        // Get the finish status
+        BOOL finished = (totalSize >= self.expectedSize);
+        
+        UIImage *image = [[SDWebImageCodersManager sharedInstance] incrementalDecodedImageWithData:imageData finished:finished];
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
+            image = [self scaledImageForKey:key image:image];
             if (self.shouldDecompressImages) {
                 image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data options:@{SDWebImageCoderScaleDownLargeImagesKey: @(NO)}];
             }
-            image = SDScaledImageForKey(key, image);
             
             [self callCompletionBlocksWithImage:image imageData:nil error:nil finished:NO];
         }
@@ -375,37 +378,43 @@ didReceiveResponse:(NSURLResponse *)response
             /**
              *  If you specified to use `NSURLCache`, then the response you get here is what you need.
              */
-            if (self.imageData) {
-                UIImage *image;
-                NSData *imageData = [self.imageData copy];
-                
+            NSData *imageData = [self.imageData copy];
+            if (imageData) {
                 /**  if you specified to only use cached data via `SDWebImageDownloaderIgnoreCachedResponse`,
                  *  then we should check if the cached data is equal to image data
                  */
-                if (self.options & SDWebImageDownloaderIgnoreCachedResponse) {
-                    if (self.cachedData) {
-                        if ([self.cachedData isEqualToData:imageData]) {
-                            // call completion block with nil
-                            [self callCompletionBlocksWithImage:nil imageData:nil error:nil finished:YES];
-                            return;
+                if (self.options & SDWebImageDownloaderIgnoreCachedResponse && [self.cachedData isEqualToData:imageData]) {
+                    // call completion block with nil
+                    [self callCompletionBlocksWithImage:nil imageData:nil error:nil finished:YES];
+                } else {
+                    UIImage *image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:imageData];
+                    NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
+                    image = [self scaledImageForKey:key image:image];
+                    
+                    BOOL shouldDecode = YES;
+                    // Do not force decoding animated GIFs and WebPs
+                    if (image.images) {
+                        shouldDecode = NO;
+                    } else {
+#ifdef SD_WEBP
+                        SDImageFormat imageFormat = [NSData sd_imageFormatForImageData:imageData];
+                        if (imageFormat == SDImageFormatWebP) {
+                            shouldDecode = NO;
+                        }
+#endif
+                    }
+                    
+                    if (shouldDecode) {
+                        if (self.shouldDecompressImages) {
+                            BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
+                            image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&imageData options:@{SDWebImageCoderScaleDownLargeImagesKey: @(shouldScaleDown)}];
                         }
                     }
-                }
-                
-                image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:imageData];
-                NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
-                image = SDScaledImageForKey(key, image);
-                
-                // Do not force decoding animated GIFs
-                if (!image.images && self.shouldDecompressImages) {
-                    BOOL shouldScaleDown = self.options & SDWebImageDownloaderScaleDownLargeImages;
-                    image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&imageData options:@{SDWebImageCoderScaleDownLargeImagesKey: @(shouldScaleDown)}];
-                    [self.imageData setData:imageData];
-                }
-                if (CGSizeEqualToSize(image.size, CGSizeZero)) {
-                    [self callCompletionBlocksWithError:[NSError errorWithDomain:SDWebImageErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey : @"Downloaded image has 0 pixels"}]];
-                } else {
-                    [self callCompletionBlocksWithImage:image imageData:imageData error:nil finished:YES];
+                    if (CGSizeEqualToSize(image.size, CGSizeZero)) {
+                        [self callCompletionBlocksWithError:[NSError errorWithDomain:SDWebImageErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey : @"Downloaded image has 0 pixels"}]];
+                    } else {
+                        [self callCompletionBlocksWithImage:image imageData:imageData error:nil finished:YES];
+                    }
                 }
             } else {
                 [self callCompletionBlocksWithError:[NSError errorWithDomain:SDWebImageErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey : @"Image data is nil"}]];
@@ -446,6 +455,9 @@ didReceiveResponse:(NSURLResponse *)response
 }
 
 #pragma mark Helper methods
+- (nullable UIImage *)scaledImageForKey:(nullable NSString *)key image:(nullable UIImage *)image {
+    return SDScaledImageForKey(key, image);
+}
 
 - (BOOL)shouldContinueWhenAppEntersBackground {
     return self.options & SDWebImageDownloaderContinueInBackground;

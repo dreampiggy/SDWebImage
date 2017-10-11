@@ -69,15 +69,7 @@
         return nil;
     }
     
-    WebPIterator iter;
-    if (!WebPDemuxGetFrame(demuxer, 1, &iter)) {
-        WebPDemuxReleaseIterator(&iter);
-        WebPDemuxDelete(demuxer);
-        return nil;
-    }
-    
     uint32_t flags = WebPDemuxGetI(demuxer, WEBP_FF_FORMAT_FLAGS);
-    
 #if SD_UIKIT || SD_WATCH
     int loopCount = WebPDemuxGetI(demuxer, WEBP_FF_LOOP_COUNT);
     int frameCount = WebPDemuxGetI(demuxer, WEBP_FF_FRAME_COUNT);
@@ -92,7 +84,6 @@
     }
     CGContextRef canvas = CGBitmapContextCreate(NULL, canvasWidth, canvasHeight, 8, 0, SDCGColorSpaceGetDeviceRGB(), bitmapInfo);
     if (!canvas) {
-        WebPDemuxReleaseIterator(&iter);
         WebPDemuxDelete(demuxer);
         return nil;
     }
@@ -114,13 +105,20 @@
 #endif
             CGImageRelease(newImageRef);
         }
-        WebPDemuxReleaseIterator(&iter);
         WebPDemuxDelete(demuxer);
         CGContextRelease(canvas);
         return staticImage;
     }
     
     // for animated webp image
+    WebPIterator iter;
+    if (!WebPDemuxGetFrame(demuxer, 1, &iter)) {
+        WebPDemuxReleaseIterator(&iter);
+        WebPDemuxDelete(demuxer);
+        CGContextRelease(canvas);
+        return nil;
+    }
+    
     NSMutableArray<UIImage *> *images = [NSMutableArray array];
 #if SD_UIKIT || SD_WATCH
     NSTimeInterval totalDuration = 0;

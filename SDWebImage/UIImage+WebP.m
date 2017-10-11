@@ -14,8 +14,7 @@
 
 @implementation UIImage (WebP)
 
-- (NSInteger)sd_webpLoopCount
-{
+- (NSInteger)sd_webpLoopCount {
     return self.sd_imageLoopCount;
 }
 
@@ -23,7 +22,7 @@
     if (!data) {
         return nil;
     }
-    return [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:data format:SDImageFormatWebP];
+    return [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:data];
 }
 
 @end

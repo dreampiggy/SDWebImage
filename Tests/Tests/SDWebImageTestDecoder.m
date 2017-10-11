@@ -11,19 +11,27 @@
 
 @implementation SDWebImageTestDecoder
 
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    return YES;
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    return YES;
+}
+
+- (UIImage *)decodedImageWithData:(NSData *)data {
     NSString * testImagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestImage" ofType:@"jpg"];
     UIImage *image = [UIImage imageWithContentsOfFile:testImagePath];
     return image;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data format:(SDImageFormat)format finished:(BOOL)finished {
+- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     NSString * testImagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"TestImage" ofType:@"gif"];
     UIImage *image = [UIImage imageWithContentsOfFile:testImagePath];
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     NSString *testString = @"TestDecompress";
     NSData *testData = [testString dataUsingEncoding:NSUTF8StringEncoding];
     *data = testData;
@@ -31,10 +39,14 @@
     return image;
 }
 
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
     NSString *testString = @"TestEncode";
     NSData *data = [testString dataUsingEncoding:NSUTF8StringEncoding];
     return data;
+}
+
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
+    return nil;
 }
 
 @end

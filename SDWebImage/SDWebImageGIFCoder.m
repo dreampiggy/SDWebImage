@@ -8,6 +8,7 @@
 
 #import "SDWebImageGIFCoder.h"
 #import <ImageIO/ImageIO.h>
+#import "NSData+ImageContentType.h"
 
 @implementation SDWebImageGIFCoder
 
@@ -21,7 +22,16 @@
 }
 
 #pragma mark - Decode
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    return ([NSData sd_imageFormatForImageData:data] == SDImageFormatGIF);
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    return (format == SDImageFormatGIF);
+}
+
+- (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;
     }
@@ -63,13 +73,18 @@
 #endif
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     // GIF do not decompress
     return image;
 }
 
 #pragma mark - Encode
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
+    return nil;
+}
+
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
+    // not supported
     return nil;
 }
 

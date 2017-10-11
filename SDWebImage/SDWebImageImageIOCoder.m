@@ -9,6 +9,7 @@
 #import "SDWebImageImageIOCoder.h"
 #import "NSImage+WebCache.h"
 #import <ImageIO/ImageIO.h>
+#import "NSData+ImageContentType.h"
 
 #if SD_UIKIT || SD_WATCH
 static const size_t kBytesPerPixel = 4;
@@ -64,7 +65,27 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 
 #pragma mark - Decode
 
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    switch ([NSData sd_imageFormatForImageData:data]) {
+        case SDImageFormatGIF:
+        case SDImageFormatWebP:
+            return NO;
+        default:
+            return YES;
+    }
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    switch (format) {
+        case SDImageFormatGIF:
+        case SDImageFormatWebP:
+            return NO;
+        default:
+            return YES;
+    }
+}
+
+- (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;
     }
@@ -82,7 +103,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     return image;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data format:(SDImageFormat)format finished:(BOOL)finished {
+- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     if (!_imageSource) {
         _imageSource = CGImageSourceCreateIncremental(NULL);
     }
@@ -159,11 +180,21 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
 #if SD_MAC
     return image;
 #endif
 #if SD_UIKIT || SD_WATCH
+    BOOL shouldScaleDown = NO;
+    if (optionsDict != nil) {
+        NSNumber *scaleDownLargeImagesOption = nil;
+        if ([optionsDict[@"SDWebImageScaleDownLargeImages"] isKindOfClass:[NSNumber class]]) {
+            scaleDownLargeImagesOption = (NSNumber *)optionsDict[@"SDWebImageScaleDownLargeImages"];
+        }
+        if (scaleDownLargeImagesOption != nil) {
+            shouldScaleDown = [scaleDownLargeImagesOption boolValue];
+        }
+    }
     if (!shouldScaleDown) {
         return [self sd_decompressedImageWithImage:image];
     } else {
@@ -337,7 +368,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 #endif
 
 #pragma mark - Encode
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
     if (!image) {
         return nil;
     }
@@ -351,30 +382,39 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
         }
     }
     
-    NSData *data;
-#if SD_MAC
-    NSBitmapImageFileType imageFileType = [[self class] sd_imageFormatToBitmapImageFileType:format];
-    data = [NSBitmapImageRep representationOfImageRepsInArray:image.representations
-                                                         usingType:imageFileType
-                                                        properties:@{}];
-#endif
-
-#if SD_UIKIT || SD_WATCH
-    switch (format) {
-        case SDImageFormatJPEG:
-            data = UIImageJPEGRepresentation(image, (CGFloat)1.0);
-            break;
-        case SDImageFormatPNG:
-            data = UIImagePNGRepresentation(image);
-        default:
-            break;
-    }
-#endif
-    if (data) {
-        return data;
+    NSMutableData *imageData = [NSMutableData data];
+    CFStringRef imageUTType = [NSData sd_UTTypeFromSDImageFormat:format];
+    
+    // Create an image destination.
+    CGImageDestinationRef imageDestination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)imageData, imageUTType, 1, NULL);
+    if (!imageDestination) {
+        // Handle failure.
+        return nil;
     }
     
-    return nil;
+    // Add your image to the destination.
+    CGImageDestinationAddImage(imageDestination, image.CGImage, (__bridge CFDictionaryRef)properties);
+    
+    // Finalize the destination.
+    if (CGImageDestinationFinalize(imageDestination) == NO) {
+        // Handle failure.
+        imageData = nil;
+    }
+    
+    CFRelease(imageDestination);
+    
+    return [imageData copy];
+}
+
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
+    NSDictionary *properties;
+    CGImageSourceRef imageSource = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+    if (!imageSource) {
+        return properties;
+    }
+    properties = (__bridge_transfer NSDictionary *)CGImageSourceCopyPropertiesAtIndex(imageSource, 0, NULL);
+    CFRelease(imageSource);
+    return properties;
 }
 
 #pragma mark - Helper
@@ -464,31 +504,6 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
             break;
     }
     return orientation;
-}
-#endif
-
-#if SD_MAC
-+ (NSBitmapImageFileType)sd_imageFormatToBitmapImageFileType:(SDImageFormat)format {
-    NSBitmapImageFileType imageFileType;
-    switch (format) {
-        case SDImageFormatJPEG:
-            imageFileType = NSJPEGFileType;
-            break;
-        case SDImageFormatPNG:
-            imageFileType = NSPNGFileType;
-            break;
-        case SDImageFormatGIF:
-            imageFileType = NSGIFFileType;
-            break;
-        case SDImageFormatTIFF:
-            imageFileType = NSTIFFFileType;
-            break;
-        default:
-            imageFileType = NSPNGFileType; // default save to PNG
-            break;
-    }
-    
-    return imageFileType;
 }
 #endif
 

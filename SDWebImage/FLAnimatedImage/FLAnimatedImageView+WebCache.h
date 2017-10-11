@@ -13,7 +13,7 @@
 #if __has_include(<FLAnimatedImage/FLAnimatedImageView.h>)
 #import <FLAnimatedImage/FLAnimatedImageView.h>
 #else
-#import "FLAnimatedImageView.h"
+#import "FLAnimatedImage.h"
 #endif
 
 #import "SDWebImageManager.h"

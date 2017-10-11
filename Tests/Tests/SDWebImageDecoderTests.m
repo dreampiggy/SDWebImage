@@ -8,9 +8,9 @@
  */
 
 #import "SDTestCase.h"
-#import <SDWebImage/SDWebImageDecoder.h>
 #import <SDWebImage/SDWebImageImageIOCoder.h>
 #import <SDWebImage/SDWebImageWebPCoder.h>
+#import <SDWebImage/UIImage+ForceDecode.h>
 
 @interface SDWebImageDecoderTests : SDTestCase
 
@@ -97,17 +97,17 @@
 - (void)test09ThatStaticWebPCoderWorks {
     NSURL *staticWebPURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImageStatic" withExtension:@"webp"];
     NSData *staticWebPData = [NSData dataWithContentsOfURL:staticWebPURL];
-    UIImage *staticWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:staticWebPData format:SDImageFormatWebP];
+    UIImage *staticWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:staticWebPData];
     expect(staticWebPImage).toNot.beNil();
     
-    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:staticWebPImage format:SDImageFormatWebP];
+    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:staticWebPImage format:SDImageFormatWebP properties:nil];
     expect(outputData).toNot.beNil();
 }
 
 - (void)test10ThatAnimatedWebPCoderWorks {
     NSURL *animatedWebPURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"TestImageAnimated" withExtension:@"webp"];
     NSData *animatedWebPData = [NSData dataWithContentsOfURL:animatedWebPURL];
-    UIImage *animatedWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:animatedWebPData format:SDImageFormatWebP];
+    UIImage *animatedWebPImage = [[SDWebImageWebPCoder sharedCoder] decodedImageWithData:animatedWebPData];
     expect(animatedWebPImage).toNot.beNil();
     expect(animatedWebPImage.images.count).to.beGreaterThan(0);
     CGSize imageSize = animatedWebPImage.size;
@@ -120,7 +120,7 @@
         expect(imageScale).to.equal(scale);
     }];
     
-    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:animatedWebPImage format:SDImageFormatWebP];
+    NSData *outputData = [[SDWebImageWebPCoder sharedCoder] encodedDataWithImage:animatedWebPImage format:SDImageFormatWebP properties:nil];
     expect(outputData).toNot.beNil();
 }
 

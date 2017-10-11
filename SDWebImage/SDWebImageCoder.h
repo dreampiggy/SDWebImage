@@ -30,46 +30,71 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 // All the method are called inside a dispatch queue and do not block main thread
 @protocol SDWebImageCoder <NSObject>
 
-@optional
+/**
+ Returns YES if this coder can decode some data. Otherwise, it should be passed to another coder
+ 
+ @param data The image data so we can look at it
+ @return YES if this coder can decode the data, NO otherwise
+ */
+- (BOOL)canDecodeData:(nullable NSData *)data;
+
+/**
+ Returns YES if this coder can encode some image. Otherwise, it should be passed to another coder
+ 
+ @param format The image format
+ @return YES if this coder can encode the image, NO otherwise
+ */
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format;
+
 /**
  Decode the image data to image.
 
  @param data The image data to be decoded
- @param format The recognized image format
  @return The decoded image from data
  */
-- (nullable UIImage *)decodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format;
-
-
-/**
- Incremental(Progressive) decode the image data to image.
-
- @param data The image data has been downloaded so far
- @param format The recognized image format
- @param finished Whether the download has finished
- @warning because incremental decoding need keep the data inside, we will alloc a new instance for each download operation to avoid conflicts
- @return The decoded image from data
- */
-- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data format:(SDImageFormat)format finished:(BOOL)finished;
+- (nullable UIImage *)decodedImageWithData:(nullable NSData *)data;
 
 /**
  Decompress the image with original image and image data
 
  @param image The original image to be decompressed
  @param data The pointer to original image data. The pointer itself is nonnull but image data can be null. This data will set to cache if needed. If you do not need to modify data at the sametime, ignore this param.
- @param format The recognized image format
- @param shouldScaleDown return YES if `SDWebImageScaleDownLargeImages` was set, otherwise return NO
+ @param optionsDict A dictionary containing any decompressing options. Pass {@"SDWebImageScaleDownLargeImages": @(YES)} to scale down large images
  @return The decompressed image
  */
-- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown;
+- (nullable UIImage *)decompressedImageWithImage:(nullable UIImage *)image data:(NSData * _Nullable * _Nonnull)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict;
 
 /**
  Encode the image to image data
 
  @param image The image to be encoded
  @param format The image format to encode, you should note `SDImageFormatUndefined` format is also  possible
+ @param properties The image properties (which can lost from the `UIImage` instance)
  @return The encoded image data
  */
-- (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format;
+- (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties;
+
+/**
+ Returns the image properties extracted directly from the `NSData`. These properties will accompany the `UIImage`
+
+ @param data The input image as data
+ @return The dictionary of image properties
+ */
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data;
+
+@end
+
+/// Using this protocol instead of an optional method inside `SDWebImageCoder`
+@protocol SDWebImageProgressiveCoder <SDWebImageCoder>
+
+/**
+ Incremental(Progressive) decode the image data to image.
+ 
+ @param data The image data has been downloaded so far
+ @param finished Whether the download has finished
+ @warning because incremental decoding need keep the data inside, we will alloc a new instance for each download operation to avoid conflicts
+ @return The decoded image from data
+ */
+- (nullable UIImage *)incrementalDecodedImageWithData:(nullable NSData *)data finished:(BOOL)finished;
 
 @end

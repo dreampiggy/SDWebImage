@@ -7,9 +7,9 @@
  */
 
 #import "SDImageCache.h"
-#import "SDWebImageDecoder.h"
 #import <CommonCrypto/CommonDigest.h>
 #import "NSImage+WebCache.h"
+#import "SDWebImageCodersManager.h"
 
 // See https://github.com/rs/SDWebImage/pull/1141 for discussion
 @interface AutoPurgeCache : NSCache
@@ -217,12 +217,11 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
             @autoreleasepool {
                 NSData *data = imageData;
                 if (!data && image) {
+                    // TODO: check this. Looks wrong to me (bpoplauschi). data is nil and then we try to get the imageFormat and properties from that nil data WTF
+                    
                     SDImageFormat imageFormatFromData = [NSData sd_imageFormatForImageData:data];
-                    if ([self.imageCoder respondsToSelector:@selector(encodedDataWithImage:format:)]) {
-                        data = [self.imageCoder encodedDataWithImage:image format:imageFormatFromData];
-                    } else {
-                        data = [[SDWebImageDecoder sharedCoder] encodedDataWithImage:image format:imageFormatFromData];
-                    }
+                    NSDictionary *properties = [[SDWebImageCodersManager sharedInstance] propertiesOfImageData:data];
+                    data = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:image format:imageFormatFromData properties:properties];
                 }
                 [self storeImageDataToDisk:data forKey:key];
             }
@@ -347,20 +346,11 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
     NSData *data = [self diskImageDataBySearchingAllPathsForKey:key];
     if (data) {
         UIImage *image;
-        SDImageFormat imageFormat = [NSData sd_imageFormatForImageData:data];
-        if ([self.imageCoder respondsToSelector:@selector(decodedImageWithData:format:)]) {
-            image = [self.imageCoder decodedImageWithData:data format:imageFormat];
-        } else {
-            image = [[SDWebImageDecoder sharedCoder] decodedImageWithData:data format:imageFormat];
-        }
+        image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:data];
         
         image = SDScaledImageForKey(key, image);
         if (self.config.shouldDecompressImages) {
-            if ([self.imageCoder respondsToSelector:@selector(decompressedImageWithImage:data:format:shouldScaleDown:)]) {
-                image = [self.imageCoder decompressedImageWithImage:image data:&data format:imageFormat shouldScaleDown:NO];
-            } else {
-                image = [[SDWebImageDecoder sharedCoder] decompressedImageWithImage:image data:&data format:imageFormat shouldScaleDown:NO];
-            }
+            image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&data options:@{@"SDWebImageScaleDownLargeImages": @(NO)}];
         }
         return image;
     } else {

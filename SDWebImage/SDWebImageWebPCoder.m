@@ -11,6 +11,7 @@
 #import "SDWebImageWebPCoder.h"
 #import "NSImage+WebCache.h"
 #import "UIImage+MultiFormat.h"
+#import "NSData+ImageContentType.h"
 #import <ImageIO/ImageIO.h>
 #if __has_include(<webp/decode.h>) && __has_include(<webp/encode.h>) && __has_include(<webp/demux.h>) && __has_include(<webp/mux.h>)
 #import <webp/decode.h>
@@ -45,7 +46,16 @@
 }
 
 #pragma mark - Decode
-- (UIImage *)decodedImageWithData:(NSData *)data format:(SDImageFormat)format {
+
+- (BOOL)canDecodeData:(nullable NSData *)data {
+    return ([NSData sd_imageFormatForImageData:data] == SDImageFormatWebP);
+}
+
+- (BOOL)canEncodeImageFormat:(SDImageFormat)format {
+    return (format == SDImageFormatWebP);
+}
+
+- (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;
     }
@@ -167,7 +177,7 @@
     return finalImage;
 }
 
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data format:(SDImageFormat)format finished:(BOOL)finished {
+- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
     if (!_idec) {
         // Progressive images need transparent, so always use premultiplied RGBA
         _idec = WebPINewRGB(MODE_rgbA, NULL, 0, 0);
@@ -237,7 +247,7 @@
     return image;
 }
 
-- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data format:(SDImageFormat)format shouldScaleDown:(BOOL)shouldScaleDown {
+- (UIImage *)decompressedImageWithImage:(UIImage *)image data:(NSData *__autoreleasing  _Nullable *)data options:(nullable NSDictionary<NSString*, NSObject*>*)optionsDict {
     // WebP do not decompress
     return image;
 }
@@ -353,7 +363,7 @@
 
 #pragma mark - Encode
 
-- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format {
+- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format properties:(nullable NSDictionary *)properties {
     if (!image) {
         return nil;
     }
@@ -410,6 +420,11 @@
 #endif
     
     return data;
+}
+
+- (nullable NSDictionary *)propertiesOfImageData:(nullable NSData *)data {
+    // not supported
+    return nil;
 }
 
 - (nullable NSData *)sd_encodedWebpDataWithImage:(nullable UIImage *)image {

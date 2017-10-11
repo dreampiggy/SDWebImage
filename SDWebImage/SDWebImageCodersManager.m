@@ -65,12 +65,6 @@
 - (NSArray<SDWebImageCoder> *)coders {
     __block NSArray<SDWebImageCoder> *sortedCoders = nil;
     dispatch_sync(self.mutableCodersAccessQueue, ^{
-        if (self.mutableCoders.count == 0) {
-            _mutableCoders = [@[[SDWebImageImageIOCoder sharedCoder], [SDWebImageGIFCoder sharedCoder]] mutableCopy];
-#ifdef SD_WEBP
-            [_mutableCoders addObject:[SDWebImageWebPCoder sharedCoder]];
-#endif
-        }
         sortedCoders = (NSArray<SDWebImageCoder> *)[[[self.mutableCoders copy] reverseObjectEnumerator] allObjects];
     });
     return sortedCoders;

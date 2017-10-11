@@ -88,7 +88,15 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 @protocol SDWebImageProgressiveCoder <SDWebImageCoder>
 
 /**
- Incremental(Progressive) decode the image data to image.
+ Returns YES if this coder can incremental decode some data. Otherwise, it should be passed to another coder.
+ 
+ @param data The image data so we can look at it
+ @return YES if this coder can decode the data, NO otherwise
+ */
+- (BOOL)canIncrementalDecodeData:(nullable NSData *)data;
+
+/**
+ Incremental decode the image data to image.
  
  @param data The image data has been downloaded so far
  @param finished Whether the download has finished

@@ -330,7 +330,7 @@ didReceiveResponse:(NSURLResponse *)response
             // We need to create a new instance for progressive decoding to avoid conflicts
             id<SDWebImageProgressiveCoder> progressiveCoder = (id<SDWebImageProgressiveCoder>)[[SDWebImageCodersManager sharedInstance] coderWithCondition:^BOOL(id<SDWebImageCoder>  _Nonnull coder) {
                 if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)]) {
-                    if ([coder canDecodeData:imageData]) {
+                    if ([((id<SDWebImageProgressiveCoder>)coder) canIncrementalDecodeData:imageData]) {
                         return YES;
                     }
                 }

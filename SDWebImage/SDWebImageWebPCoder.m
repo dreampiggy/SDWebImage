@@ -55,6 +55,10 @@
     return (format == SDImageFormatWebP);
 }
 
+- (BOOL)canIncrementalDecodeData:(NSData *)data {
+    return ([NSData sd_imageFormatForImageData:data] == SDImageFormatWebP);
+}
+
 - (UIImage *)decodedImageWithData:(NSData *)data {
     if (!data) {
         return nil;

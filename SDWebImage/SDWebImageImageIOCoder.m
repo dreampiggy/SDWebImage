@@ -67,6 +67,7 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 
 - (BOOL)canDecodeData:(nullable NSData *)data {
     switch ([NSData sd_imageFormatForImageData:data]) {
+        // Do not support GIF decoding
         case SDImageFormatGIF:
         case SDImageFormatWebP:
             return NO;
@@ -77,7 +78,18 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
 
 - (BOOL)canEncodeImageFormat:(SDImageFormat)format {
     switch (format) {
+        // Do not support GIF encoding
         case SDImageFormatGIF:
+        case SDImageFormatWebP:
+            return NO;
+        default:
+            return YES;
+    }
+}
+
+- (BOOL)canIncrementalDecodeData:(NSData *)data {
+    switch ([NSData sd_imageFormatForImageData:data]) {
+        // Support static GIF progressive decoding
         case SDImageFormatWebP:
             return NO;
         default:

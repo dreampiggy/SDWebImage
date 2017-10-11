@@ -65,6 +65,12 @@
 - (NSArray<SDWebImageCoder> *)coders {
     __block NSArray<SDWebImageCoder> *sortedCoders = nil;
     dispatch_sync(self.mutableCodersAccessQueue, ^{
+        if (self.mutableCoders.count == 0) {
+            _mutableCoders = [@[[SDWebImageImageIOCoder sharedCoder], [SDWebImageGIFCoder sharedCoder]] mutableCopy];
+#ifdef SD_WEBP
+            [_mutableCoders addObject:[SDWebImageWebPCoder sharedCoder]];
+#endif
+        }
         sortedCoders = (NSArray<SDWebImageCoder> *)[[[self.mutableCoders copy] reverseObjectEnumerator] allObjects];
     });
     return sortedCoders;
@@ -74,6 +80,15 @@
     dispatch_barrier_sync(self.mutableCodersAccessQueue, ^{
         self.mutableCoders = [coders mutableCopy];
     });
+}
+
+- (id<SDWebImageCoder>)coderWithCondition:(SDWebImageCodersConditionBlock)conditionBlock {
+    for (id<SDWebImageCoder> coder in self.coders) {
+        if (conditionBlock && conditionBlock(coder)) {
+            return coder;
+        }
+    }
+    return nil;
 }
 
 #pragma mark - SDWebImageCoder
@@ -130,19 +145,5 @@
     }
     return nil;
 }
-
-- (UIImage *)incrementalDecodedImageWithData:(NSData *)data finished:(BOOL)finished {
-    if (!data) {
-        return nil;
-    }
-    for (id<SDWebImageCoder> coder in self.coders) {
-        if ([coder canDecodeData:data] && [coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)]) {
-            id<SDWebImageProgressiveCoder> progressiveCoder = (id<SDWebImageProgressiveCoder>)coder;
-            return [progressiveCoder incrementalDecodedImageWithData:data finished:finished];
-        }
-    }
-    return nil;
-}
-
 
 @end

@@ -44,6 +44,8 @@ typedef NSMutableDictionary<NSString *, id> SDCallbacksDictionary;
 @property (assign, nonatomic) UIBackgroundTaskIdentifier backgroundTaskId;
 #endif
 
+@property (strong, nonatomic, nullable) id<SDWebImageProgressiveCoder> progressiveCoder;
+
 @end
 
 @implementation SDWebImageDownloaderOperation
@@ -324,7 +326,19 @@ didReceiveResponse:(NSURLResponse *)response
         // Get the finish status
         BOOL finished = (totalSize >= self.expectedSize);
         
-        UIImage *image = [[SDWebImageCodersManager sharedInstance] incrementalDecodedImageWithData:imageData finished:finished];
+        if (!self.progressiveCoder) {
+            // We need to create a new instance for progressive decoding to avoid conflicts
+            self.progressiveCoder = (id<SDWebImageProgressiveCoder>)[[SDWebImageCodersManager sharedInstance] coderWithCondition:^BOOL(id<SDWebImageCoder>  _Nonnull coder) {
+                if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)]) {
+                    if ([coder canDecodeData:imageData]) {
+                        return YES;
+                    }
+                }
+                return NO;
+            }];
+        }
+        
+        UIImage *image = [self.progressiveCoder incrementalDecodedImageWithData:imageData finished:finished];
         if (image) {
             NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];
             image = [self scaledImageForKey:key image:image];

@@ -10,13 +10,42 @@
 #import <Foundation/Foundation.h>
 #import "SDWebImageCoder.h"
 
-@interface SDWebImageCodersManager : NSObject<SDWebImageProgressiveCoder>
+NS_ASSUME_NONNULL_BEGIN
+
+typedef BOOL (^SDWebImageCodersConditionBlock)(id<SDWebImageCoder> coder);
+
+@interface SDWebImageCodersManager : NSObject<SDWebImageCoder>
 
 + (nonnull instancetype)sharedInstance;
 
-@property (nonatomic, strong, nonnull) NSArray<SDWebImageCoder>* coders;
+/**
+ All coders in coders manager. The coders array is a priority queue, which means the later added coder will have the highest priority
+ This property is resettable, means you can pass nil to set it to the default state. The getter method will never return nil
+ */
+@property (nonatomic, strong, readwrite, null_resettable) NSArray<SDWebImageCoder>* coders;
 
+/**
+ Add a new coder to the end of coders array. Which has the highest priority.
+
+ @param coder coder
+ */
 - (void)addCoder:(nonnull id<SDWebImageCoder>)coder;
+
+/**
+ Remove a coder in the coders array.
+
+ @param coder coder
+ */
 - (void)removeCoder:(nonnull id<SDWebImageCoder>)coder;
 
+/**
+ Return the coder pass the specify condition.
+
+ @param conditionBlock Return YES to specify the current coder is chosen.
+ @return The coder which pass the condition
+ */
+- (nullable id<SDWebImageCoder>)coderWithCondition:(SDWebImageCodersConditionBlock)conditionBlock;
+
 @end
+
+NS_ASSUME_NONNULL_END

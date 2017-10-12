@@ -41,7 +41,7 @@ CG_EXTERN BOOL SDCGImageRefContainsAlpha(_Nullable CGImageRef imageRef);
 /**
  Returns YES if this coder can decode some data. Otherwise, the data should be passed to another coder.
  
- @param data The image data so we can look at it
+ @param data The image data so we can look at
  @return YES if this coder can decode the data, NO otherwise
  */
 - (BOOL)canDecodeFromData:(nullable NSData *)data;

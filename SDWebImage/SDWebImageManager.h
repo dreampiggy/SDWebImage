@@ -65,6 +65,18 @@ typedef void(^SDInternalCompletionBlock)(UIImage * _Nullable image, NSData * _Nu
  */
 - (BOOL)imageManager:(nonnull SDWebImageManager *)imageManager shouldBlockFailedURL:(nonnull NSURL *)imageURL withError:(nonnull NSError *)error;
 
+/**
+ Control the retry download logic to mark as finished.
+
+ @param imageManager The current `SDWebImageManager`
+ @param imageURL The url of the image
+ @param error The download error for the url
+ @param retryTimes The current retry times for current image load, the first time is 0. And will be increased each time you do retry.
+ @param loaderOperation The download operation. It's typically `SDWebImageDownloadToken`, You can use it to check more detailed information (like HTTP response) if needed.
+ @return Return true to do a retry automatically, false to mark it finally as finished
+ */
+- (BOOL)imageManager:(nonnull SDWebImageManager *)imageManager shouldRetryDownloadForURL:(nonnull NSURL *)imageURL withError:(nonnull NSError *)error retryTimes:(NSUInteger)retryTimes loaderOperation:(nonnull id<SDWebImageOperation>)loaderOperation;
+
 @end
 
 /**

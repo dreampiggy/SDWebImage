@@ -16,7 +16,10 @@
 #import "SDInternalMacros.h"
 #import <mach/mach.h>
 #import <objc/runtime.h>
+#if __IPHONE_13_0 || __TVOS_13_0 || __MAC_10_15
+// Xcode 11
 #import <ImageIO/CGImageAnimation.h>
+#endif
 #import "SDImageCoderHelper.h"
 
 #if SD_MAC
@@ -206,57 +209,58 @@ static NSUInteger SDDeviceFreeMemory() {
     // We need call super method to keep function. This will impliedly call `setNeedsDisplay`. But we have no way to avoid this when using animated image. So we call `setNeedsDisplay` again at the end.
     super.image = image;
     if ([image conformsToProtocol:@protocol(SDAnimatedImage)]) {
-        NSData *animatedImageData = [((UIImage<SDAnimatedImage> *)image) animatedImageData];
-        CGImageAnimationStatus status = CGAnimateImageDataWithBlock((__bridge CFDataRef)animatedImageData, nil, ^(size_t index, CGImageRef  _Nonnull imageRef, bool * _Nonnull stop) {
-            // Bug ? ImageRef been freed even I retain +1 or copy + 1
-            // Using force redraw to draw one instead
-            CGImageRef frameImageRef = [SDImageCoderHelper CGImageCreateDecoded:imageRef];
-            self.currentFrame = [UIImage imageWithCGImage:CGImageCreateCopy(frameImageRef)];
-            self.currentFrameIndex = index;
-            [self.layer setNeedsDisplay];
-        });
+        UIImage<SDAnimatedImage> *animatedImage = (UIImage<SDAnimatedImage> *)image;
+        // Check built in animation supports
+#if __IPHONE_13_0 || __TVOS_13_0 || __MAC_10_15
+        if ([self supportsBuiltInAnimation]) {
+            NSData *animatedImageData = animatedImage.animatedImageData;
+            SDImageFormat format = [NSData sd_imageFormatForImageData:animatedImageData];
+            if (format == SDImageFormatGIF || format == SDImageFormatPNG) {
+                BOOL success = [self startBuiltInAnimationWithData:animatedImageData];
+                if (success) {
+                    return;
+                }
+            }
+        }
+#endif
         
-        
-        
-        
-        
-//        NSUInteger animatedImageFrameCount = ((UIImage<SDAnimatedImage> *)image).animatedImageFrameCount;
-//        // Check the frame count
-//        if (animatedImageFrameCount <= 1) {
-//            return;
-//        }
-//        // If progressive rendering is disabled but animated image is incremental. Only show poster image
-//        if (!self.isProgressive && image.sd_isIncremental) {
-//            return;
-//        }
-//        self.animatedImage = (UIImage<SDAnimatedImage> *)image;
-//        self.totalFrameCount = animatedImageFrameCount;
-//        // Get the current frame and loop count.
-//        self.totalLoopCount = self.animatedImage.animatedImageLoopCount;
-//        // Get the scale
-//        self.animatedImageScale = image.scale;
-//        if (!self.isProgressive) {
-//            self.currentFrame = image;
-//            SD_LOCK(self.lock);
-//            self.frameBuffer[@(self.currentFrameIndex)] = self.currentFrame;
-//            SD_UNLOCK(self.lock);
-//        }
-//
-//        // Ensure disabled highlighting; it's not supported (see `-setHighlighted:`).
-//        super.highlighted = NO;
-//
-//        // Calculate max buffer size
-//        [self calculateMaxBufferCount];
-//        // Update should animate
-//        [self updateShouldAnimate];
-//        if (self.shouldAnimate) {
-//            [self startAnimating];
-//        }
-//
-//        [self.layer setNeedsDisplay];
-//#if SD_MAC
-//        [self.layer displayIfNeeded]; // macOS's imageViewLayer may not equal to self.layer. But `[super setImage:]` will impliedly mark it needsDisplay. We call `[self.layer displayIfNeeded]` to immediately refresh the imageViewLayer to avoid flashing
-//#endif
+        NSUInteger animatedImageFrameCount = animatedImage.animatedImageFrameCount;
+        // Check the frame count
+        if (animatedImageFrameCount <= 1) {
+            return;
+        }
+        // If progressive rendering is disabled but animated image is incremental. Only show poster image
+        if (!self.isProgressive && image.sd_isIncremental) {
+            return;
+        }
+        self.animatedImage = animatedImage;
+        self.totalFrameCount = animatedImageFrameCount;
+        // Get the current frame and loop count.
+        self.totalLoopCount = self.animatedImage.animatedImageLoopCount;
+        // Get the scale
+        self.animatedImageScale = image.scale;
+        if (!self.isProgressive) {
+            self.currentFrame = image;
+            SD_LOCK(self.lock);
+            self.frameBuffer[@(self.currentFrameIndex)] = self.currentFrame;
+            SD_UNLOCK(self.lock);
+        }
+
+        // Ensure disabled highlighting; it's not supported (see `-setHighlighted:`).
+        super.highlighted = NO;
+
+        // Calculate max buffer size
+        [self calculateMaxBufferCount];
+        // Update should animate
+        [self updateShouldAnimate];
+        if (self.shouldAnimate) {
+            [self startAnimating];
+        }
+
+        [self.layer setNeedsDisplay];
+#if SD_MAC
+        [self.layer displayIfNeeded]; // macOS's imageViewLayer may not equal to self.layer. But `[super setImage:]` will impliedly mark it needsDisplay. We call `[self.layer displayIfNeeded]` to immediately refresh the imageViewLayer to avoid flashing
+#endif
     }
 }
 
@@ -580,6 +584,45 @@ static NSUInteger SDDeviceFreeMemory() {
         }
     }
 }
+
+#pragma mark - Built In Animation
+
+#if __IPHONE_13_0 || __TVOS_13_0 || __MAC_10_15
+- (BOOL)supportsBuiltInAnimation {
+    // TODO: DEBUG
+    return YES;
+    if (@available(iOS 13, macOS 10.15, *)) {
+        if (self.prefersBuiltInAnimation) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+- (BOOL)startBuiltInAnimationWithData:(NSData *)animatedImageData {
+    NSUInteger maxLoopCount = self.shouldCustomLoopCount ? self.animationRepeatCount : self.totalLoopCount;
+    NSDictionary *options = @{(__bridge NSString *)kCGImageAnimationLoopCount : @(maxLoopCount)};
+    CGImageAnimationStatus status = CGAnimateImageDataWithBlock((__bridge CFDataRef)animatedImageData, (__bridge CFDictionaryRef)options, ^(size_t index, CGImageRef  _Nonnull imageRef, bool * _Nonnull stop) {
+        // Bug ? ImageRef been freed even I retain +1 or copy + 1
+        // Using force redraw to draw one instead
+        // And some GIF/APNG show wrong color (the input `imageRef` arg already shows wrong), wait for Apple to fix :)
+        CGImageRef frameImageRef = [SDImageCoderHelper CGImageCreateDecoded:imageRef];
+#if SD_MAC
+        self.currentFrame = [[UIImage alloc] initWithCGImage:frameImageRef scale:self.animatedImageScale orientation:kCGImagePropertyOrientationUp];
+#else
+        self.currentFrame = [[UIImage alloc] initWithCGImage:frameImageRef scale:self.animatedImageScale orientation:UIImageOrientationUp];
+#endif
+        CGImageRelease(frameImageRef);
+        self.currentFrameIndex = index;
+        [self.layer setNeedsDisplay];
+    });
+    
+    return status == noErr;
+}
+#pragma clang diagnostic pop
+#endif
 
 #if SD_MAC
 - (void)displayDidRefresh:(CVDisplayLinkRef)displayLink duration:(NSTimeInterval)duration

@@ -58,6 +58,13 @@
  */
 @property (nonatomic, assign) BOOL shouldIncrementalLoad;
 
+/**
+ By default, we will use `SDAnimatedImageCoder` internaly for animated image player and rendering. Which support for customization. But Apple's Image/IO from iOS 13, supports built-in GIF/APNG player.
+ If you enable this option, we'll prefers the Image/IO animated image plaer instead when available. (iOS 13+ && image format is GIF/APNG).
+ Defaults is NO.
+ */
+@property (nonatomic, assign) BOOL prefersBuiltInAnimation;
+
 #if SD_UIKIT
 /**
  You can specify a runloop mode to let it rendering.

@@ -210,20 +210,6 @@ static NSUInteger SDDeviceFreeMemory() {
     super.image = image;
     if ([image conformsToProtocol:@protocol(SDAnimatedImage)]) {
         UIImage<SDAnimatedImage> *animatedImage = (UIImage<SDAnimatedImage> *)image;
-        // Check built in animation supports
-#if __IPHONE_13_0 || __TVOS_13_0 || __MAC_10_15
-        if ([self supportsBuiltInAnimation]) {
-            NSData *animatedImageData = animatedImage.animatedImageData;
-            SDImageFormat format = [NSData sd_imageFormatForImageData:animatedImageData];
-            if (format == SDImageFormatGIF || format == SDImageFormatPNG) {
-                BOOL success = [self startBuiltInAnimationWithData:animatedImageData];
-                if (success) {
-                    return;
-                }
-            }
-        }
-#endif
-        
         NSUInteger animatedImageFrameCount = animatedImage.animatedImageFrameCount;
         // Check the frame count
         if (animatedImageFrameCount <= 1) {
@@ -239,15 +225,31 @@ static NSUInteger SDDeviceFreeMemory() {
         self.totalLoopCount = self.animatedImage.animatedImageLoopCount;
         // Get the scale
         self.animatedImageScale = image.scale;
+        // Ensure disabled highlighting; it's not supported (see `-setHighlighted:`).
+        super.highlighted = NO;
+        
+        // Check built in animation supports
+#if __IPHONE_13_0 || __TVOS_13_0 || __MAC_10_15
+        if ([self supportsBuiltInAnimation]) {
+            NSData *animatedImageData = animatedImage.animatedImageData;
+            SDImageFormat format = [NSData sd_imageFormatForImageData:animatedImageData];
+            if (format == SDImageFormatGIF || format == SDImageFormatPNG) {
+                BOOL success = [self startBuiltInAnimationWithImage:animatedImage];
+                if (success) {
+                    [self updateShouldAnimate];
+                    self.animatedImage = nil; // Disable custom render (CADisplayLink)
+                    return;
+                }
+            }
+        }
+#endif
+        
         if (!self.isProgressive) {
             self.currentFrame = image;
             SD_LOCK(self.lock);
             self.frameBuffer[@(self.currentFrameIndex)] = self.currentFrame;
             SD_UNLOCK(self.lock);
         }
-
-        // Ensure disabled highlighting; it's not supported (see `-setHighlighted:`).
-        super.highlighted = NO;
 
         // Calculate max buffer size
         [self calculateMaxBufferCount];
@@ -601,10 +603,15 @@ static NSUInteger SDDeviceFreeMemory() {
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability"
-- (BOOL)startBuiltInAnimationWithData:(NSData *)animatedImageData {
-    NSUInteger maxLoopCount = self.shouldCustomLoopCount ? self.animationRepeatCount : self.totalLoopCount;
+- (BOOL)startBuiltInAnimationWithImage:(UIImage<SDAnimatedImage> *)animatedImage {
+    NSData *animatedImageData = animatedImage.animatedImageData;
+    NSUInteger maxLoopCount = self.shouldCustomLoopCount ? self.animationRepeatCount : animatedImage.animatedImageLoopCount;
     NSDictionary *options = @{(__bridge NSString *)kCGImageAnimationLoopCount : @(maxLoopCount)};
     CGImageAnimationStatus status = CGAnimateImageDataWithBlock((__bridge CFDataRef)animatedImageData, (__bridge CFDictionaryRef)options, ^(size_t index, CGImageRef  _Nonnull imageRef, bool * _Nonnull stop) {
+        if (!self.shouldAnimate) {
+            *stop = YES;
+            return;
+        }
         // Bug ? ImageRef been freed even I retain +1 or copy + 1
         // Using force redraw to draw one instead
         // And some GIF/APNG show wrong color (the input `imageRef` arg already shows wrong), wait for Apple to fix :)

@@ -14,7 +14,9 @@
 static NSString *kTestImageKeyJPEG = @"TestImageKey.jpg";
 static NSString *kTestImageKeyPNG = @"TestImageKey.png";
 
-@interface SDImageCacheTests : SDTestCase <NSFileManagerDelegate>
+@interface SDImageCacheTests : SDTestCase <NSFileManagerDelegate, NSCacheDelegate>
+
+@property (nonatomic, strong) NSMutableArray *evictObjects;
 
 @end
 
@@ -467,6 +469,51 @@ static NSString *kTestImageKeyPNG = @"TestImageKey.png";
 }
 #endif
 
+#pragma mark - SDMemoryLRUCache
+
+- (void)test47LRUMemoryCacheExpireWorks {
+    SDImageCacheConfig *config = [SDImageCacheConfig new];
+    config.maxMemoryCost = 1000; // 1000 Bytes
+    config.shouldUseWeakMemoryCache = NO; // Disable weak cache which may effect test behavior
+    SDMemoryCache *nsCache = [[SDMemoryCache alloc] initWithConfig:config];
+    nsCache.delegate = self;
+    SDMemoryLRUCache *lruCache = [[SDMemoryLRUCache alloc] initWithConfig:config];
+    lruCache.releaseAsynchronously = NO; // Disable async release which may effect test behavior
+    
+    // We limit the max memory cost to 1KB, then add one object (large) is 500 Bytes, another 5 (small) each 200 Bytes.
+    // After each add operation, we query the large one
+    // If LRU works, since the large one is always been query, even the max memory cost hit, it will never been purged. However, NSCache should purge it
+    size_t largeSize = 500;
+    size_t smallSize = 100;
+    
+    void *largeBuffer = malloc(largeSize);
+    id largeObject = [NSData dataWithBytes:largeBuffer length:largeSize];
+    free(largeBuffer);
+    
+    [nsCache setObject:largeObject forKey:@"large" cost:largeSize];
+    [lruCache setObject:largeObject forKey:@"large" cost:largeSize];
+    
+    for (int i = 0; i < 100; i++) {
+        __unused id nsQuery = [nsCache objectForKey:@"large"];
+        __unused id lruQuery = [lruCache objectForKey:@"large"];
+        
+        void *smallBuffer = malloc(smallSize);
+        id smallObject = [NSData dataWithBytes:smallBuffer length:smallSize];
+        free(smallBuffer);
+        
+        NSString *key = [NSString stringWithFormat:@"small_%d", i];
+        [nsCache setObject:smallObject forKey:key cost:smallSize];
+        [lruCache setObject:smallObject forKey:key cost:smallSize];
+    }
+    
+    id nsQuery = [nsCache objectForKey:@"large"];
+    id lruQuery = [lruCache objectForKey:@"large"];
+    
+    expect(nsQuery).beNil(); // assume NSCache don't use LRU, this is nil
+    expect([self.evictObjects containsObject:largeObject]).beTruthy(); // the evict objects must contains the largeObject
+    expect(lruQuery).notTo.beNil(); // assume LRUCache works, this is not nil
+}
+
 #pragma mark - SDImageCache & SDImageCachesManager
 - (void)test50SDImageCacheQueryOp {
     XCTestExpectation *expectation = [self expectationWithDescription:@"SDImageCache query op works"];
@@ -652,6 +699,15 @@ static NSString *kTestImageKeyPNG = @"TestImageKey.png";
     }];
     
     [self waitForExpectationsWithCommonTimeout];
+}
+
+#pragma mark - NSCacheDelegate
+
+- (void)cache:(NSCache *)cache willEvictObject:(id)obj {
+    if (!self.evictObjects) {
+        self.evictObjects = [NSMutableArray array];
+    }
+    [self.evictObjects addObject:obj];
 }
 
 #pragma mark Helper methods

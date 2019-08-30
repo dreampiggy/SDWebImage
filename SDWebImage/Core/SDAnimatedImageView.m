@@ -230,7 +230,7 @@ static NSUInteger SDDeviceFreeMemory() {
         
         // Check built in animation supports
 #if __IPHONE_13_0 || __TVOS_13_0 || __MAC_10_15
-        if ([self supportsBuiltInAnimation]) {
+        if (!self.isProgressive && [self supportsBuiltInAnimation]) {
             NSData *animatedImageData = animatedImage.animatedImageData;
             SDImageFormat format = [NSData sd_imageFormatForImageData:animatedImageData];
             if (format == SDImageFormatGIF || format == SDImageFormatPNG) {
@@ -595,8 +595,6 @@ static NSUInteger SDDeviceFreeMemory() {
 
 #if __IPHONE_13_0 || __TVOS_13_0 || __MAC_10_15
 - (BOOL)supportsBuiltInAnimation {
-    // TODO: DEBUG
-    return YES;
     if (@available(iOS 13, macOS 10.15, *)) {
         if (self.prefersBuiltInAnimation) {
             return YES;
@@ -610,22 +608,21 @@ static NSUInteger SDDeviceFreeMemory() {
 - (BOOL)startBuiltInAnimationWithImage:(UIImage<SDAnimatedImage> *)animatedImage {
     NSData *animatedImageData = animatedImage.animatedImageData;
     NSUInteger maxLoopCount = self.shouldCustomLoopCount ? self.animationRepeatCount : animatedImage.animatedImageLoopCount;
+    if (maxLoopCount == 0) {
+        maxLoopCount = ((__bridge NSNumber *)kCFNumberPositiveInfinity).unsignedIntegerValue - 1;
+    }
     NSDictionary *options = @{(__bridge NSString *)kCGImageAnimationLoopCount : @(maxLoopCount)};
     CGImageAnimationStatus status = CGAnimateImageDataWithBlock((__bridge CFDataRef)animatedImageData, (__bridge CFDictionaryRef)options, ^(size_t index, CGImageRef  _Nonnull imageRef, bool * _Nonnull stop) {
         if (!self.shouldAnimate) {
             *stop = YES;
             return;
         }
-        // Bug ? ImageRef been freed even I retain +1 or copy + 1
-        // Using force redraw to draw one instead
-        // And some GIF/APNG show wrong color (the input `imageRef` arg already shows wrong), wait for Apple to fix :)
-        CGImageRef frameImageRef = [SDImageCoderHelper CGImageCreateDecoded:imageRef];
+        // The CGImageRef provided by this API is GET only, should not call CGImageRelease
 #if SD_MAC
-        self.currentFrame = [[UIImage alloc] initWithCGImage:frameImageRef scale:self.animatedImageScale orientation:kCGImagePropertyOrientationUp];
+        self.currentFrame = [[UIImage alloc] initWithCGImage:imageRef scale:self.animatedImageScale orientation:kCGImagePropertyOrientationUp];
 #else
-        self.currentFrame = [[UIImage alloc] initWithCGImage:frameImageRef scale:self.animatedImageScale orientation:UIImageOrientationUp];
+        self.currentFrame = [[UIImage alloc] initWithCGImage:imageRef scale:self.animatedImageScale orientation:UIImageOrientationUp];
 #endif
-        CGImageRelease(frameImageRef);
         self.currentFrameIndex = index;
         [self.layer setNeedsDisplay];
     });

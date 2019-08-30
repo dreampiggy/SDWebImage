@@ -208,8 +208,8 @@ static NSUInteger SDDeviceFreeMemory() {
     
     // We need call super method to keep function. This will impliedly call `setNeedsDisplay`. But we have no way to avoid this when using animated image. So we call `setNeedsDisplay` again at the end.
     super.image = image;
-    if ([image conformsToProtocol:@protocol(SDAnimatedImage)]) {
-        UIImage<SDAnimatedImage> *animatedImage = (UIImage<SDAnimatedImage> *)image;
+    if ([image.class conformsToProtocol:@protocol(SDAnimatedImage)]) {
+    	UIImage<SDAnimatedImage> *animatedImage = (UIImage<SDAnimatedImage> *)image;
         NSUInteger animatedImageFrameCount = animatedImage.animatedImageFrameCount;
         // Check the frame count
         if (animatedImageFrameCount <= 1) {
@@ -481,6 +481,8 @@ static NSUInteger SDDeviceFreeMemory() {
 - (void)stopAnimating
 {
     if (self.animatedImage) {
+        [_fetchQueue cancelAllOperations];
+        // Using `_displayLink` here because when UIImageView dealloc, it may trigger `[self stopAnimating]`, we already release the display link in SDAnimatedImageView's dealloc method.
 #if SD_MAC
         CVDisplayLinkStop(_displayLink);
 #else
@@ -556,9 +558,11 @@ static NSUInteger SDDeviceFreeMemory() {
         // Early return
         return;
     }
-    if ([image conformsToProtocol:@protocol(SDAnimatedImage)] && image.sd_isIncremental) {
+    // We must use `image.class conformsToProtocol:` instead of `image conformsToProtocol:` here
+    // Because UIKit on macOS, using internal hard-coded override method, which returns NO
+    if ([image.class conformsToProtocol:@protocol(SDAnimatedImage)] && image.sd_isIncremental) {
         UIImage *previousImage = self.image;
-        if ([previousImage conformsToProtocol:@protocol(SDAnimatedImage)] && previousImage.sd_isIncremental) {
+        if ([previousImage.class conformsToProtocol:@protocol(SDAnimatedImage)] && previousImage.sd_isIncremental) {
             NSData *previousData = [((UIImage<SDAnimatedImage> *)previousImage) animatedImageData];
             NSData *currentData = [((UIImage<SDAnimatedImage> *)image) animatedImageData];
             // Check whether to use progressive rendering or not
@@ -731,9 +735,18 @@ static NSUInteger SDDeviceFreeMemory() {
         UIImage<SDAnimatedImage> *animatedImage = self.animatedImage;
         NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
             UIImage *frame = [animatedImage animatedImageFrameAtIndex:fetchFrameIndex];
-            SD_LOCK(self.lock);
-            self.frameBuffer[@(fetchFrameIndex)] = frame;
-            SD_UNLOCK(self.lock);
+
+            BOOL isAnimating = NO;
+#if SD_MAC
+            isAnimating = CVDisplayLinkIsRunning(self.displayLink);
+#else
+            isAnimating = !self.displayLink.isPaused;
+#endif
+            if (isAnimating) {
+                SD_LOCK(self.lock);
+                self.frameBuffer[@(fetchFrameIndex)] = frame;
+                SD_UNLOCK(self.lock);
+            }
         }];
         [self.fetchQueue addOperation:operation];
     }

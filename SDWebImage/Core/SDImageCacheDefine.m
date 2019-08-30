@@ -29,8 +29,16 @@ UIImage * _Nullable SDImageCacheDecodeImageData(NSData * _Nonnull imageData, NSS
         // check whether we should use `SDAnimatedImage`
         if ([animatedImageClass isSubclassOfClass:[UIImage class]] && [animatedImageClass conformsToProtocol:@protocol(SDAnimatedImage)]) {
             image = [[animatedImageClass alloc] initWithData:imageData scale:scale options:coderOptions];
-            if (options & SDWebImagePreloadAllFrames && [image respondsToSelector:@selector(preloadAllFrames)]) {
-                [((id<SDAnimatedImage>)image) preloadAllFrames];
+            if (image) {
+                // Preload frames if supported
+                if (options & SDWebImagePreloadAllFrames && [image respondsToSelector:@selector(preloadAllFrames)]) {
+                    [((id<SDAnimatedImage>)image) preloadAllFrames];
+                }
+            } else {
+                // Check image class matching
+                if (options & SDWebImageMatchAnimatedImageClass) {
+                    return nil;
+                }
             }
         }
     }
@@ -39,7 +47,7 @@ UIImage * _Nullable SDImageCacheDecodeImageData(NSData * _Nonnull imageData, NSS
     }
     if (image) {
         BOOL shouldDecode = (options & SDWebImageAvoidDecodeImage) == 0;
-        if ([image conformsToProtocol:@protocol(SDAnimatedImage)]) {
+        if ([image.class conformsToProtocol:@protocol(SDAnimatedImage)]) {
             // `SDAnimatedImage` do not decode
             shouldDecode = NO;
         } else if (image.sd_isAnimated) {

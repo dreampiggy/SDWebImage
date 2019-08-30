@@ -609,6 +609,8 @@ static NSUInteger SDDeviceFreeMemory() {
     NSData *animatedImageData = animatedImage.animatedImageData;
     NSUInteger maxLoopCount = self.shouldCustomLoopCount ? self.animationRepeatCount : animatedImage.animatedImageLoopCount;
     if (maxLoopCount == 0) {
+        // The documentation says `kCFNumberPositiveInfinity may be used`, but it actually treat as 1 loop count
+        // 0 was treated as 1 loop count as well, not the same as Image/IO or UIKit
         maxLoopCount = ((__bridge NSNumber *)kCFNumberPositiveInfinity).unsignedIntegerValue - 1;
     }
     NSDictionary *options = @{(__bridge NSString *)kCGImageAnimationLoopCount : @(maxLoopCount)};

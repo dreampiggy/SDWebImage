@@ -32,7 +32,7 @@ let package = Package(
             dependencies: [],
             path: ".",
             sources: ["SDWebImage/Core", "SDWebImage/Private"],
-            publicHeadersPath: "SDWebImage/Core",
+            publicHeadersPath: "Module/SDWebImage",
             cSettings: [
                 .headerSearchPath("SDWebImage/Core"),
                 .headerSearchPath("SDWebImage/Private")
@@ -43,7 +43,7 @@ let package = Package(
             dependencies: ["SDWebImage"],
             path: ".",
             sources: ["SDWebImage/MapKit"],
-            publicHeadersPath: "SDWebImage/MapKit",
+            publicHeadersPath: "Module/SDWebImageMapKit",
             cSettings: [
                 .headerSearchPath("SDWebImage/Core"),
                 .headerSearchPath("SDWebImage/Private")

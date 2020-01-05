@@ -20,8 +20,14 @@ UIImage * _Nullable SDImageCacheDecodeImageData(NSData * _Nonnull imageData, NSS
     CGFloat scale = scaleValue.doubleValue >= 1 ? scaleValue.doubleValue : SDImageScaleFactorForKey(cacheKey);
     SDImageCoderOptions *coderOptions = @{SDImageCoderDecodeFirstFrameOnly : @(decodeFirstFrame), SDImageCoderDecodeScaleFactor : @(scale)};
     if (context) {
+        SDImageCoderOptions *providedCoderOptions = context[SDWebImageContextCoderOptions];
         SDImageCoderMutableOptions *mutableCoderOptions = [coderOptions mutableCopy];
-        [mutableCoderOptions setValue:context forKey:SDImageCoderWebImageContext];
+        SDWebImageMutableContext *mutableContext = [context mutableCopy];
+        if (providedCoderOptions) {
+            [mutableCoderOptions addEntriesFromDictionary:providedCoderOptions];
+            mutableContext[SDWebImageContextCoderOptions] = nil;
+        }
+        [mutableCoderOptions setValue:[mutableContext copy] forKey:SDImageCoderWebImageContext];
         coderOptions = [mutableCoderOptions copy];
     }
     

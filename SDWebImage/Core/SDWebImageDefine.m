@@ -130,3 +130,4 @@ SDWebImageContextOption const SDWebImageContextDownloadResponseModifier = @"down
 SDWebImageContextOption const SDWebImageContextDownloadDecryptor = @"downloadDecryptor";
 SDWebImageContextOption const SDWebImageContextCacheKeyFilter = @"cacheKeyFilter";
 SDWebImageContextOption const SDWebImageContextCacheSerializer = @"cacheSerializer";
+SDWebImageContextOption const SDWebImageContextCoderOptions = @"coderOptions";

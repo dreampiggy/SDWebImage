@@ -34,8 +34,14 @@ UIImage * _Nullable SDImageLoaderDecodeImageData(NSData * _Nonnull imageData, NS
     CGFloat scale = scaleValue.doubleValue >= 1 ? scaleValue.doubleValue : SDImageScaleFactorForKey(cacheKey);
     SDImageCoderOptions *coderOptions = @{SDImageCoderDecodeFirstFrameOnly : @(decodeFirstFrame), SDImageCoderDecodeScaleFactor : @(scale)};
     if (context) {
+        SDImageCoderOptions *providedCoderOptions = context[SDWebImageContextCoderOptions];
         SDImageCoderMutableOptions *mutableCoderOptions = [coderOptions mutableCopy];
-        [mutableCoderOptions setValue:context forKey:SDImageCoderWebImageContext];
+        SDWebImageMutableContext *mutableContext = [context mutableCopy];
+        if (providedCoderOptions) {
+            [mutableCoderOptions addEntriesFromDictionary:providedCoderOptions];
+            mutableContext[SDWebImageContextCoderOptions] = nil;
+        }
+        [mutableCoderOptions setValue:[mutableContext copy] forKey:SDImageCoderWebImageContext];
         coderOptions = [mutableCoderOptions copy];
     }
     
@@ -101,8 +107,14 @@ UIImage * _Nullable SDImageLoaderDecodeProgressiveImageData(NSData * _Nonnull im
     CGFloat scale = scaleValue.doubleValue >= 1 ? scaleValue.doubleValue : SDImageScaleFactorForKey(cacheKey);
     SDImageCoderOptions *coderOptions = @{SDImageCoderDecodeFirstFrameOnly : @(decodeFirstFrame), SDImageCoderDecodeScaleFactor : @(scale)};
     if (context) {
+        SDImageCoderOptions *providedCoderOptions = context[SDWebImageContextCoderOptions];
         SDImageCoderMutableOptions *mutableCoderOptions = [coderOptions mutableCopy];
-        [mutableCoderOptions setValue:context forKey:SDImageCoderWebImageContext];
+        SDWebImageMutableContext *mutableContext = [context mutableCopy];
+        if (providedCoderOptions) {
+            [mutableCoderOptions addEntriesFromDictionary:providedCoderOptions];
+            mutableContext[SDWebImageContextCoderOptions] = nil;
+        }
+        [mutableCoderOptions setValue:[mutableContext copy] forKey:SDImageCoderWebImageContext];
         coderOptions = [mutableCoderOptions copy];
     }
     

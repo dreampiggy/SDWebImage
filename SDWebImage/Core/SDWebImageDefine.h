@@ -260,3 +260,8 @@ FOUNDATION_EXPORT SDWebImageContextOption _Nonnull const SDWebImageContextCacheK
  A id<SDWebImageCacheSerializer> instance to convert the decoded image, the source downloaded data, to the actual data. It's used for manager to store image to the disk cache. If you provide one, it will ignore the `cacheSerializer` in manager and use provided one instead. (id<SDWebImageCacheSerializer>)
  */
 FOUNDATION_EXPORT SDWebImageContextOption _Nonnull const SDWebImageContextCacheSerializer;
+
+/**
+ A SDImageCoderOptions(NSDictionary<SDImageCoderOption, id>) instance to used when use the coder to decode or encode images. Because the `SDWebImageOptions` already provide some control options like `SDWebImageDecodeFirstFrameOnly` , when this context option provided, the value with the same key will applied and override the previous value from `SDWebImageOptions` to generate final options (SDImageCoderOptions)
+ */
+FOUNDATION_EXPORT SDWebImageContextOption _Nonnull const SDWebImageContextCoderOptions;

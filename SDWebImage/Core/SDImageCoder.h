@@ -18,19 +18,19 @@ typedef NSMutableDictionary<SDImageCoderOption, id> SDImageCoderMutableOptions;
 // These options are for image decoding
 /**
  A Boolean value indicating whether to decode the first frame only for animated image during decoding. (NSNumber). If not provide, decode animated image if need.
- @note works for `SDImageCoder`.
+ @note works for `SDImageDecoder`.
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeFirstFrameOnly;
 /**
  A CGFloat value which is greater than or equal to 1.0. This value specify the image scale factor for decoding. If not provide, use 1.0. (NSNumber)
- @note works for `SDImageCoder`, `SDProgressiveImageCoder`, `SDAnimatedImageCoder`.
+ @note works for `SDImageDecoder`, `SDProgressiveImageDecoder`, `SDAnimatedImageDecoder`.
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeScaleFactor;
 
 /**
  A Boolean value indicating whether to keep the original aspect ratio when generating thumbnail images (or bitmap images from vector format).
  Defaults to YES.
- @note works for `SDImageCoder`, `SDProgressiveImageCoder`, `SDAnimatedImageCoder`.
+ @note works for `SDImageDecoder`, `SDProgressiveImageDecoder`, `SDAnimatedImageDecoder`.
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodePreserveAspectRatio;
 
@@ -38,7 +38,7 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodePreserveAs
  A CGSize value indicating whether or not to generate the thumbnail images (or bitmap images from vector format). When this value is provided, the decoder will generate a thumbnail image which pixel size is smaller than or equal to (depends the `.preserveAspectRatio`) the value size.
  Defaults to CGSizeZero, which means no thumbnail generation at all.
  @note When you pass `.preserveAspectRatio == NO`, the thumbnail image is stretched to match each dimension. When `.preserveAspectRatio == YES`, the thumbnail image's width is limited to pixel size's width, the thumbnail image's height is limited to pixel size's height. For common cases, you can just pass a square size to limit both.
- @note works for `SDImageCoder`, `SDProgressiveImageCoder`, `SDAnimatedImageCoder`.
+ @note works for `SDImageDecoder`, `SDProgressiveImageDecoder`, `SDAnimatedImageDecoder`.
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeThumbnailPixelSize;
 
@@ -46,14 +46,20 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeThumbnailP
 // These options are for image encoding
 /**
  A Boolean value indicating whether to encode the first frame only for animated image during encoding. (NSNumber). If not provide, encode animated image if need.
- @note works for `SDImageCoder`.
+ @note works for `SDImageEncoder`.
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderEncodeFirstFrameOnly;
 /**
  A double value between 0.0-1.0 indicating the encode compression quality to produce the image data. 1.0 resulting in no compression and 0.0 resulting in the maximum compression possible. If not provide, use 1.0. (NSNumber)
- @note works for `SDImageCoder`
+ @note works for `SDImageEncoder`
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderEncodeCompressionQuality;
+
+/**
+ A UIColor(NSColor) value to used for non-alpha image encoding when the input image has alpha channel, the background color will be used to compose the alpha one. If not provide, use white color.
+ @note works for `SDImageEncoder`
+ */
+FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderEncodeBackgroundColor;
 
 /**
  A SDWebImageContext object which hold the original context options from top-level API. (SDWebImageContext)
@@ -63,16 +69,14 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderEncodeCompressio
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderWebImageContext API_DEPRECATED("The coder component will be seperated from Core subspec in the future. Update your code to not rely on this context option.", macos(10.10, API_TO_BE_DEPRECATED), ios(8.0, API_TO_BE_DEPRECATED), tvos(9.0, API_TO_BE_DEPRECATED), watchos(2.0, API_TO_BE_DEPRECATED));;
 
-#pragma mark - Coder
+#pragma mark - Coder Decoding
 /**
- This is the image coder protocol to provide custom image decoding/encoding.
+ This is the image coder protocol to provide custom image decoding.
  These methods are all required to implement.
  @note Pay attention that these methods are not called from main queue.
- */
-@protocol SDImageCoder <NSObject>
-
+*/
+@protocol SDImageDecoder <NSObject>
 @required
-#pragma mark - Decoding
 /**
  Returns YES if this coder can decode some data. Otherwise, the data should be passed to another coder.
  
@@ -92,8 +96,16 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderWebImageContext 
 - (nullable UIImage *)decodedImageWithData:(nullable NSData *)data
                                    options:(nullable SDImageCoderOptions *)options;
 
-#pragma mark - Encoding
+@end
 
+#pragma mark - Coder Encoding
+/**
+ This is the image coder protocol to provide custom image encoding.
+ These methods are all required to implement.
+ @note Pay attention that these methods are not called from main queue.
+*/
+@protocol SDImageEncoder <NSObject>
+@required
 /**
  Returns YES if this coder can encode some image. Otherwise, it should be passed to another coder.
  For custom coder which introduce new image format, you'd better define a new `SDImageFormat` using like this. If you're creating public coder plugin for new image format, also update `https://github.com/rs/SDWebImage/wiki/Coder-Plugin-List` to avoid same value been defined twice.
@@ -121,13 +133,17 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderWebImageContext 
 
 @end
 
-#pragma mark - Progressive Coder
+@protocol SDImageCoder <SDImageDecoder, SDImageEncoder>
+
+@end
+
+#pragma mark - Progressive Decoding
 /**
  This is the image coder protocol to provide custom progressive image decoding.
  These methods are all required to implement.
  @note Pay attention that these methods are not called from main queue.
  */
-@protocol SDProgressiveImageCoder <SDImageCoder>
+@protocol SDProgressiveImageDecoder <SDImageDecoder>
 
 @required
 /**
@@ -164,6 +180,9 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderWebImageContext 
  */
 - (nullable UIImage *)incrementalDecodedImageWithOptions:(nullable SDImageCoderOptions *)options;
 
+@end
+
+@protocol SDProgressiveImageCoder <SDProgressiveImageDecoder, SDImageEncoder>
 @end
 
 #pragma mark - Animated Image Provider
@@ -213,11 +232,11 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderWebImageContext 
 
 @end
 
-#pragma mark - Animated Coder
+#pragma mark - Animated Decoding
 /**
  This is the animated image coder protocol for custom animated image class like  `SDAnimatedImage`. Through it inherit from `SDImageCoder`. We currentlly only use the method `canDecodeFromData:` to detect the proper coder for specify animated image format.
  */
-@protocol SDAnimatedImageCoder <SDImageCoder, SDAnimatedImageProvider>
+@protocol SDAnimatedImageDecoder <SDImageDecoder, SDAnimatedImageProvider>
 
 @required
 /**
@@ -230,5 +249,20 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderWebImageContext 
  @return A new instance to do animated decoding for specify image data
  */
 - (nullable instancetype)initWithAnimatedImageData:(nullable NSData *)data options:(nullable SDImageCoderOptions *)options;
+
+@end
+
+#pragma mark - Animated Encoding
+@protocol SDAnimatedImageEncoder <SDImageEncoder>
+@optional
+- (nullable instancetype)initWithAnimatedImageFormat:(SDImageFormat)format frameCount:(NSUInteger)frameCount options:(nullable SDImageCoderOptions *)options;
+
+- (void)addImageFrame:(nonnull UIImage *)image duration:(NSTimeInterval)duration options:(nullable SDImageCoderOptions *)options;
+
+- (void)setAnimatedImageLoopCount:(NSUInteger)loopCount;
+
+@end
+
+@protocol SDAnimatedImageCoder <SDAnimatedImageDecoder, SDAnimatedImageEncoder>
 
 @end

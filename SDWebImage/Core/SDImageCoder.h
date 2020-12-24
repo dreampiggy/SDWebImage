@@ -29,17 +29,29 @@ FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeFirstFrame
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeScaleFactor;
 
 /**
- A Boolean value indicating whether to keep the original aspect ratio when generating thumbnail images (or bitmap images from vector format).
- Defaults to YES.
+ A SDImageScaleMode enum value indicating the calculation for thumbnail and vector image sizing.
+ - fill: Stretch to the provided size. 0 length means the original image's size
+ - aspectFit: Keep the aspect ratio of original image, the output length should be smaller than either width or height you provided. 0 length will use that length as limit.
+ - aspectFill: Keep the aspect ratio of original image, the output length should be bigger than either width or height you provided. 0 length will use that length as limit.
+ Defaults to `.aspectFit`.
+ @note When you use this option, the deprecated `SDImageCoderDecodePreserveAspectRatio` will be ingored.
  @note works for `SDImageCoder`, `SDProgressiveImageCoder`, `SDAnimatedImageCoder`.
  */
-FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodePreserveAspectRatio;
+FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeScaleMode;
+
+/**
+ A Boolean value indicating whether to keep the original aspect ratio when generating thumbnail images (or bitmap images from vector format).
+ Defaults to YES.
+ @note When you pass `.preserveAspectRatio == NO`, the thumbnail image is stretched to match each dimension. When `.preserveAspectRatio == YES`, the thumbnail image's width is limited to pixel size's width, the thumbnail image's height is limited to pixel size's height. For common cases, you can just pass a square size to limit both.
+ @note works for `SDImageCoder`, `SDProgressiveImageCoder`, `SDAnimatedImageCoder`.
+ */
+FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodePreserveAspectRatio API_DEPRECATED_WITH_REPLACEMENT("SDImageCoderDecodeScaleMode", macos(10.10, 10.10), ios(8.0, 8.0), tvos(9.0, 9.0), watchos(2.0, 2.0));
 
 /**
  A CGSize value indicating whether or not to generate the thumbnail images (or bitmap images from vector format). When this value is provided, the decoder will generate a thumbnail image which pixel size is smaller than or equal to (depends the `.preserveAspectRatio`) the value size.
  Defaults to CGSizeZero, which means no thumbnail generation at all.
  @note Supports for animated image as well.
- @note When you pass `.preserveAspectRatio == NO`, the thumbnail image is stretched to match each dimension. When `.preserveAspectRatio == YES`, the thumbnail image's width is limited to pixel size's width, the thumbnail image's height is limited to pixel size's height. For common cases, you can just pass a square size to limit both.
+ @note If you need to use fill/aspectFit/aspectFill for output image sizing, provide `SDImageCoderDecodeScaleMode` option as well
  @note works for `SDImageCoder`, `SDProgressiveImageCoder`, `SDAnimatedImageCoder`.
  */
 FOUNDATION_EXPORT SDImageCoderOption _Nonnull const SDImageCoderDecodeThumbnailPixelSize;

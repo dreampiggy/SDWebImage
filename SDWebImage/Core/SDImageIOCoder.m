@@ -12,6 +12,7 @@
 #import <ImageIO/ImageIO.h>
 #import "UIImage+Metadata.h"
 #import "SDImageIOAnimatedCoderInternal.h"
+#import "UIImage+ForceDecode.h"
 
 // Specify File Size for lossy format encoding, like JPEG
 static NSString * kSDCGImageDestinationRequestedFileSize = @"kCGImageDestinationRequestedFileSize";
@@ -87,14 +88,18 @@ static NSString * kSDCGImageDestinationRequestedFileSize = @"kCGImageDestination
     if (!source) {
         return nil;
     }
-    
-    UIImage *image = [SDImageIOAnimatedCoder createFrameAtIndex:0 source:source scale:scale preserveAspectRatio:preserveAspectRatio thumbnailSize:thumbnailSize options:nil];
+    NSDictionary *decodingOptions = @{
+        (__bridge NSString *)kCGImageSourceShouldCacheImmediately : @(YES),
+        (__bridge NSString *)kCGImageSourceShouldCache : @(YES) // Always cache to reduce CPU usage
+    };
+    UIImage *image = [SDImageIOAnimatedCoder createFrameAtIndex:0 source:source scale:scale preserveAspectRatio:preserveAspectRatio thumbnailSize:thumbnailSize options:decodingOptions];
     CFRelease(source);
     if (!image) {
         return nil;
     }
     
     image.sd_imageFormat = [NSData sd_imageFormatForImageData:data];
+    image.sd_isDecoded = YES;
     return image;
 }
 
@@ -180,9 +185,14 @@ static NSString * kSDCGImageDestinationRequestedFileSize = @"kCGImageDestination
         if (scaleFactor != nil) {
             scale = MAX([scaleFactor doubleValue], 1);
         }
-        image = [SDImageIOAnimatedCoder createFrameAtIndex:0 source:_imageSource scale:scale preserveAspectRatio:_preserveAspectRatio thumbnailSize:_thumbnailSize options:nil];
+        NSDictionary *decodingOptions = @{
+            (__bridge NSString *)kCGImageSourceShouldCacheImmediately : @(YES),
+            (__bridge NSString *)kCGImageSourceShouldCache : @(YES) // Always cache to reduce CPU usage
+        };
+        image = [SDImageIOAnimatedCoder createFrameAtIndex:0 source:_imageSource scale:scale preserveAspectRatio:_preserveAspectRatio thumbnailSize:_thumbnailSize options:decodingOptions];
         if (image) {
             CFStringRef uttype = CGImageSourceGetType(_imageSource);
+            image.sd_isDecoded = YES;
             image.sd_imageFormat = [NSData sd_imageFormatFromUTType:uttype];
         }
     }

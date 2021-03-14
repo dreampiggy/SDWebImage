@@ -19,6 +19,15 @@ static NSString * kSDCGImageSourceRasterizationDPI = @"kCGImageSourceRasterizati
 // Specify File Size for lossy format encoding, like JPEG
 static NSString * kSDCGImageDestinationRequestedFileSize = @"kCGImageDestinationRequestedFileSize";
 
+IOSurfaceRef CGImageSourceCreateIOSurfaceAtIndex(CGImageSourceRef _iio_Nonnull isrc, size_t index, CFDictionaryRef _iio_Nullable options);
+
+@interface UIImage (IOSurface)
+
+- (instancetype)_initWithIOSurface:(IOSurfaceRef)arg1 scale:(double)arg2 orientation:(long long)arg3 ;
+-(instancetype)initWithIOSurface:(IOSurfaceRef)ioSurface;
+
+@end
+
 @interface SDImageIOCoderFrame : NSObject
 
 @property (nonatomic, assign) NSUInteger index; // Frame index (zero based)
@@ -213,65 +222,81 @@ static NSString * kSDCGImageDestinationRequestedFileSize = @"kCGImageDestination
     }
     CGImageRef imageRef;
     BOOL createFullImage = thumbnailSize.width == 0 || thumbnailSize.height == 0 || pixelWidth == 0 || pixelHeight == 0 || (pixelWidth <= thumbnailSize.width && pixelHeight <= thumbnailSize.height);
-    if (createFullImage) {
-        if (isVector) {
-            if (thumbnailSize.width == 0 || thumbnailSize.height == 0) {
-                // Provide the default pixel count for vector images, simply just use the screen size
-#if SD_WATCH
-                thumbnailSize = WKInterfaceDevice.currentDevice.screenBounds.size;
-#elif SD_UIKIT
-                thumbnailSize = UIScreen.mainScreen.bounds.size;
-#elif SD_MAC
-                thumbnailSize = NSScreen.mainScreen.frame.size;
-#endif
-            }
-            CGFloat maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.height);
-            NSUInteger DPIPerPixel = 2;
-            NSUInteger rasterizationDPI = maxPixelSize * DPIPerPixel;
-            decodingOptions[kSDCGImageSourceRasterizationDPI] = @(rasterizationDPI);
-        }
-        imageRef = CGImageSourceCreateImageAtIndex(source, index, (__bridge CFDictionaryRef)[decodingOptions copy]);
-    } else {
-        decodingOptions[(__bridge NSString *)kCGImageSourceCreateThumbnailWithTransform] = @(preserveAspectRatio);
-        CGFloat maxPixelSize;
-        if (preserveAspectRatio) {
-            CGFloat pixelRatio = pixelWidth / pixelHeight;
-            CGFloat thumbnailRatio = thumbnailSize.width / thumbnailSize.height;
-            if (pixelRatio > thumbnailRatio) {
-                maxPixelSize = thumbnailSize.width;
-            } else {
-                maxPixelSize = thumbnailSize.height;
-            }
-        } else {
-            maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.height);
-        }
-        decodingOptions[(__bridge NSString *)kCGImageSourceThumbnailMaxPixelSize] = @(maxPixelSize);
-        decodingOptions[(__bridge NSString *)kCGImageSourceCreateThumbnailFromImageAlways] = @(YES);
-        imageRef = CGImageSourceCreateThumbnailAtIndex(source, index, (__bridge CFDictionaryRef)[decodingOptions copy]);
-    }
-    if (!imageRef) {
-        return nil;
-    }
+//    if (createFullImage) {
+//        if (isVector) {
+//            if (thumbnailSize.width == 0 || thumbnailSize.height == 0) {
+//                // Provide the default pixel count for vector images, simply just use the screen size
+//#if SD_WATCH
+//                thumbnailSize = WKInterfaceDevice.currentDevice.screenBounds.size;
+//#elif SD_UIKIT
+//                thumbnailSize = UIScreen.mainScreen.bounds.size;
+//#elif SD_MAC
+//                thumbnailSize = NSScreen.mainScreen.frame.size;
+//#endif
+//            }
+//            CGFloat maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.height);
+//            NSUInteger DPIPerPixel = 2;
+//            NSUInteger rasterizationDPI = maxPixelSize * DPIPerPixel;
+//            decodingOptions[kSDCGImageSourceRasterizationDPI] = @(rasterizationDPI);
+//        }
+//        imageRef = CGImageSourceCreateImageAtIndex(source, index, (__bridge CFDictionaryRef)[decodingOptions copy]);
+//    } else {
+//        decodingOptions[(__bridge NSString *)kCGImageSourceCreateThumbnailWithTransform] = @(preserveAspectRatio);
+//        CGFloat maxPixelSize;
+//        if (preserveAspectRatio) {
+//            CGFloat pixelRatio = pixelWidth / pixelHeight;
+//            CGFloat thumbnailRatio = thumbnailSize.width / thumbnailSize.height;
+//            if (pixelRatio > thumbnailRatio) {
+//                maxPixelSize = thumbnailSize.width;
+//            } else {
+//                maxPixelSize = thumbnailSize.height;
+//            }
+//        } else {
+//            maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.height);
+//        }
+//        decodingOptions[(__bridge NSString *)kCGImageSourceThumbnailMaxPixelSize] = @(maxPixelSize);
+//        decodingOptions[(__bridge NSString *)kCGImageSourceCreateThumbnailFromImageAlways] = @(YES);
+//        imageRef = CGImageSourceCreateThumbnailAtIndex(source, index, (__bridge CFDictionaryRef)[decodingOptions copy]);
+//    }
+//    if (!imageRef) {
+//        return nil;
+//    }
     // Thumbnail image post-process
-    if (!createFullImage) {
-        if (preserveAspectRatio) {
-            // kCGImageSourceCreateThumbnailWithTransform will apply EXIF transform as well, we should not apply twice
-            exifOrientation = kCGImagePropertyOrientationUp;
-        } else {
-            // `CGImageSourceCreateThumbnailAtIndex` take only pixel dimension, if not `preserveAspectRatio`, we should manual scale to the target size
-            CGImageRef scaledImageRef = [SDImageCoderHelper CGImageCreateScaled:imageRef size:thumbnailSize];
-            CGImageRelease(imageRef);
-            imageRef = scaledImageRef;
-        }
+//    if (!createFullImage) {
+//        if (preserveAspectRatio) {
+//            // kCGImageSourceCreateThumbnailWithTransform will apply EXIF transform as well, we should not apply twice
+//            exifOrientation = kCGImagePropertyOrientationUp;
+//        } else {
+//            // `CGImageSourceCreateThumbnailAtIndex` take only pixel dimension, if not `preserveAspectRatio`, we should manual scale to the target size
+//            CGImageRef scaledImageRef = [SDImageCoderHelper CGImageCreateScaled:imageRef size:thumbnailSize];
+//            CGImageRelease(imageRef);
+//            imageRef = scaledImageRef;
+//        }
+//    }
+//
+//#if SD_UIKIT || SD_WATCH
+//    UIImageOrientation imageOrientation = [SDImageCoderHelper imageOrientationFromEXIFOrientation:exifOrientation];
+//    UIImage *image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:imageOrientation];
+//#else
+//    UIImage *image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:exifOrientation];
+//#endif
+//    CGImageRelease(imageRef);
+    
+    UIImage *image;
+    if (@available (iOS 11, *)) {
+        // Bytes Per Pixel: 1.5
+        IOSurfaceRef iosurface = CGImageSourceCreateIOSurfaceAtIndex(source, index, (__bridge CFDictionaryRef)@{
+            @"kCGImageSurfaceFormatRequest":@"BGRA"});
+        UIImageOrientation imageOrientation = [SDImageCoderHelper imageOrientationFromEXIFOrientation:exifOrientation];
+        image = [[UIImage alloc] _initWithIOSurface:iosurface scale:scale orientation:imageOrientation];
+    } else {
+        // Bytes Per Pixel: 4
+        CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, index, nil);
+        UIImageOrientation imageOrientation = [SDImageCoderHelper imageOrientationFromEXIFOrientation:exifOrientation];
+        image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:imageOrientation];
+        CGImageRelease(imageRef);
     }
     
-#if SD_UIKIT || SD_WATCH
-    UIImageOrientation imageOrientation = [SDImageCoderHelper imageOrientationFromEXIFOrientation:exifOrientation];
-    UIImage *image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:imageOrientation];
-#else
-    UIImage *image = [[UIImage alloc] initWithCGImage:imageRef scale:scale orientation:exifOrientation];
-#endif
-    CGImageRelease(imageRef);
     return image;
 }
 

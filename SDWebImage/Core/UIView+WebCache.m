@@ -155,7 +155,7 @@ const int64_t SDWebImageProgressUnitCountUnknown = 1LL;
             
             BOOL shouldCallCompletedBlock = finished || (options & SDWebImageAvoidAutoSetImage);
             BOOL shouldNotSetImage = ((image && (options & SDWebImageAvoidAutoSetImage)) ||
-                                      (!image && !(options & SDWebImageDelayPlaceholder)));
+                                      (!image && [error.domain isEqualToString:SDWebImageErrorDomain] && error.code == SDWebImageErrorCancelled));
             SDWebImageNoParamsBlock callCompletedBlockClosure = ^{
                 if (!self) { return; }
                 if (!shouldNotSetImage) {
@@ -168,7 +168,7 @@ const int64_t SDWebImageProgressUnitCountUnknown = 1LL;
             
             // case 1a: we got an image, but the SDWebImageAvoidAutoSetImage flag is set
             // OR
-            // case 1b: we got no image and the SDWebImageDelayPlaceholder is not set
+            // case 1b: we got no image but error, because image loading is cancelled
             if (shouldNotSetImage) {
                 dispatch_main_async_safe(callCompletedBlockClosure);
                 return;

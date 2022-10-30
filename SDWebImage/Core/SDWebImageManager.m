@@ -567,64 +567,21 @@ static id<SDImageLoader> _defaultImageLoader;
     shouldTransformImage = shouldTransformImage && (!originalImage.sd_isAnimated || (options & SDWebImageTransformAnimatedImage));
     shouldTransformImage = shouldTransformImage && (!originalImage.sd_isVector || (options & SDWebImageTransformVectorImage));
     
-    // thumbnail check
-    // This exist when previous thumbnail pipeline callback into next full size pipeline, because we share the same URL download but need different image
-    // Actually this is a hack, we attach the metadata into image object, which should design a better concept like `ImageInfo` and keep that around
-    // Redecode need the full size data (progressive decoding or third-party loaders may callback nil data)
-    BOOL shouldRedecodeFullImage = originalData && cacheType == SDImageCacheTypeNone;
-    if (shouldRedecodeFullImage) {
-        // If the retuened image decode options exist (some loaders impl does not use `SDImageLoaderDecode`) but does not match the options we provide, redecode
-        SDImageCoderOptions *returnedDecodeOptions = originalImage.sd_decodeOptions;
-        if (returnedDecodeOptions) {
-            SDImageCoderOptions *decodeOptions = SDGetDecodeOptionsFromContext(context, options, url.absoluteString);
-            shouldRedecodeFullImage = ![returnedDecodeOptions isEqualToDictionary:decodeOptions];
-        } else {
-            shouldRedecodeFullImage = NO;
-        }
-    }
-    
     if (shouldTransformImage) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             @autoreleasepool {
                 // transformed/thumbnailed cache key
                 NSString *key = [self cacheKeyForURL:url context:context];
-                // Case that transformer one thumbnail, which this time need full pixel image
-                UIImage *fullSizeImage = originalImage;
-                BOOL imageWasRedecoded = NO;
-                if (shouldRedecodeFullImage) {
-                    fullSizeImage = SDImageCacheDecodeImageData(originalData, key, options, context);
-                    if (fullSizeImage) {
-                        imageWasRedecoded = YES;
-                    } else {
-                        imageWasRedecoded = NO;
-                        fullSizeImage = originalImage; // Fallback
-                    }
-                }
-                UIImage *transformedImage = [transformer transformedImageWithImage:fullSizeImage forKey:key];
+                // Case that transformer on thumbnail, which this time need full pixel image
+                UIImage *transformedImage = [transformer transformedImageWithImage:originalImage forKey:key];
                 if (transformedImage && finished) {
-                    BOOL imageWasTransformed = ![transformedImage isEqual:fullSizeImage];
+                    BOOL imageWasTransformed = ![transformedImage isEqual:originalImage];
                     // Continue store transform cache process
-                    [self callStoreTransformCacheProcessForOperation:operation url:url options:options context:context image:transformedImage data:originalData cacheType:cacheType finished:finished transformed:imageWasTransformed || imageWasRedecoded completed:completedBlock];
+                    [self callStoreTransformCacheProcessForOperation:operation url:url options:options context:context image:originalImage data:originalData cacheType:cacheType finished:finished transformed:imageWasTransformed completed:completedBlock];
                 } else {
                     // Continue store transform cache process
-                    [self callStoreTransformCacheProcessForOperation:operation url:url options:options context:context image:fullSizeImage data:originalData cacheType:cacheType finished:finished transformed:imageWasRedecoded completed:completedBlock];
+                    [self callStoreTransformCacheProcessForOperation:operation url:url options:options context:context image:originalImage data:originalData cacheType:cacheType finished:finished transformed:NO completed:completedBlock];
                 }
-            }
-        });
-    } else if (shouldRedecodeFullImage) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            @autoreleasepool {
-                // Re-decode because the returned image does not match current request pipeline's context
-                UIImage *fullSizeImage = SDImageCacheDecodeImageData(originalData, url.absoluteString, options, context);
-                BOOL imageWasRedecoded = NO;
-                if (fullSizeImage) {
-                    imageWasRedecoded = YES;
-                } else {
-                    imageWasRedecoded = NO;
-                    fullSizeImage = originalImage; // Fallback
-                }
-                // Continue store transform cache process
-                [self callStoreTransformCacheProcessForOperation:operation url:url options:options context:context image:fullSizeImage data:originalData cacheType:cacheType finished:finished transformed:imageWasRedecoded completed:completedBlock];
             }
         });
     } else {

@@ -10,6 +10,8 @@
 #import "SDWebImageDownloaderConfig.h"
 #import "SDWebImageDownloaderOperation.h"
 #import "SDWebImageError.h"
+#import "SDWebImageCacheKeyFilter.h"
+#import "SDImageCacheDefine.h"
 #import "SDInternalMacros.h"
 
 NSNotificationName const SDWebImageDownloadStartNotification = @"SDWebImageDownloadStartNotification";
@@ -18,6 +20,50 @@ NSNotificationName const SDWebImageDownloadStopNotification = @"SDWebImageDownlo
 NSNotificationName const SDWebImageDownloadFinishNotification = @"SDWebImageDownloadFinishNotification";
 
 static void * SDWebImageDownloaderContext = &SDWebImageDownloaderContext;
+
+// A unique key represent <url, decodeOptions>, only same tuple can share same SDWebImageDownloaderOperation
+// For example, <url1, @{scale:2}> and <url1, @{scale: 1}> does not share same pipeline
+@interface SDWebImageDownloadKey : NSObject<NSCopying>
+
+@property (nonatomic, strong) NSString *url;
+@property (nonatomic, copy) SDImageCoderOptions *decodeOptions;
+
+@end
+
+@implementation SDWebImageDownloadKey
+
+- (id)copyWithZone:(NSZone *)zone {
+    SDWebImageDownloadKey *key = [[[self class] allocWithZone:zone] init];
+    key.url = self.url;
+    key.decodeOptions = self.decodeOptions;
+    return key;
+}
+
+- (BOOL)isEqual:(id)other {
+    if (nil == other) {
+      return NO;
+    }
+    if (self == other) {
+      return YES;
+    }
+    if (![other isKindOfClass:[self class]]) {
+      return NO;
+    }
+    SDWebImageDownloadKey *key = (SDWebImageDownloadKey *)other;
+    BOOL result = [self.url isEqualToString:key.url] && [self.decodeOptions isEqualToDictionary:key.decodeOptions];
+    return result;
+}
+
+- (NSUInteger)hash
+{
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.url.hash;
+    result = prime * result + self.decodeOptions.hash;
+    return result;
+}
+
+@end
 
 @interface SDWebImageDownloadToken ()
 
@@ -38,7 +84,7 @@ static void * SDWebImageDownloaderContext = &SDWebImageDownloaderContext;
 @interface SDWebImageDownloader () <NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 
 @property (strong, nonatomic, nonnull) NSOperationQueue *downloadQueue;
-@property (strong, nonatomic, nonnull) NSMutableDictionary<NSURL *, NSOperation<SDWebImageDownloaderOperation> *> *URLOperations;
+@property (strong, nonatomic, nonnull) NSMutableDictionary<SDWebImageDownloadKey *, NSOperation<SDWebImageDownloaderOperation> *> *URLOperations;
 @property (strong, nonatomic, nullable) NSMutableDictionary<NSString *, NSString *> *HTTPHeaders;
 
 // The session in which data tasks will run
@@ -206,7 +252,9 @@ static void * SDWebImageDownloaderContext = &SDWebImageDownloaderContext;
     
     SD_LOCK(_operationsLock);
     id downloadOperationCancelToken;
-    NSOperation<SDWebImageDownloaderOperation> *operation = [self.URLOperations objectForKey:url];
+    // Unique key
+    SDWebImageDownloadKey *key = [self createKeyWithUrl:url options:options context:context];
+    NSOperation<SDWebImageDownloaderOperation> *operation = [self.URLOperations objectForKey:key];
     // There is a case that the operation may be marked as finished or cancelled, but not been removed from `self.URLOperations`.
     if (!operation || operation.isFinished || operation.isCancelled) {
         operation = [self createDownloaderOperationWithUrl:url options:options context:context];
@@ -225,10 +273,10 @@ static void * SDWebImageDownloaderContext = &SDWebImageDownloaderContext;
                 return;
             }
             SD_LOCK(self->_operationsLock);
-            [self.URLOperations removeObjectForKey:url];
+            [self.URLOperations removeObjectForKey:key];
             SD_UNLOCK(self->_operationsLock);
         };
-        self.URLOperations[url] = operation;
+        [self.URLOperations setObject:operation forKey:key];
         // Add the handlers before submitting to operation queue, avoid the race condition that operation finished before setting handlers.
         downloadOperationCancelToken = [operation addHandlersForProgress:progressBlock completed:completedBlock];
         // Add operation to operation queue only after all configuration done according to Apple's doc.
@@ -258,6 +306,34 @@ static void * SDWebImageDownloaderContext = &SDWebImageDownloaderContext;
     token.downloadOperationCancelToken = downloadOperationCancelToken;
     
     return token;
+}
+
+#pragma mark Helper methods
++ (SDWebImageOptions)imageOptionsFromDownloaderOptions:(SDWebImageDownloaderOptions)downloadOptions {
+    SDWebImageOptions options = 0;
+    if (downloadOptions & SDWebImageDownloaderScaleDownLargeImages) options |= SDWebImageScaleDownLargeImages;
+    if (downloadOptions & SDWebImageDownloaderDecodeFirstFrameOnly) options |= SDWebImageDecodeFirstFrameOnly;
+    if (downloadOptions & SDWebImageDownloaderPreloadAllFrames) options |= SDWebImagePreloadAllFrames;
+    if (downloadOptions & SDWebImageDownloaderAvoidDecodeImage) options |= SDWebImageAvoidDecodeImage;
+    if (downloadOptions & SDWebImageDownloaderMatchAnimatedImageClass) options |= SDWebImageMatchAnimatedImageClass;
+    
+    return options;
+}
+
+- (nonnull SDWebImageDownloadKey *)createKeyWithUrl:(nonnull NSURL *)url
+                                            options:(SDWebImageDownloaderOptions)options
+                                            context:(nullable SDWebImageContext *)context {
+    id<SDWebImageCacheKeyFilter> cacheKeyFilter = context[SDWebImageContextCacheKeyFilter];
+    NSString *cacheKey;
+    if (cacheKeyFilter) {
+        cacheKey = [cacheKeyFilter cacheKeyForURL:url];
+    } else {
+        cacheKey = url.absoluteString;
+    }
+    SDWebImageDownloadKey *key = [SDWebImageDownloadKey new];
+    key.url = url.absoluteString;
+    key.decodeOptions = SDGetDecodeOptionsFromContext(context, [self.class imageOptionsFromDownloaderOptions:options], cacheKey);
+    return key;
 }
 
 - (nullable NSOperation<SDWebImageDownloaderOperation> *)createDownloaderOperationWithUrl:(nonnull NSURL *)url

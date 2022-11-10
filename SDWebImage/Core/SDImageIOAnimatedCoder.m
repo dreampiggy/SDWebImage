@@ -18,8 +18,6 @@
 #import <ImageIO/ImageIO.h>
 #import <CoreServices/CoreServices.h>
 
-// Specify DPI for vector format in CGImageSource, like PDF
-static NSString * kSDCGImageSourceRasterizationDPI = @"kCGImageSourceRasterizationDPI";
 // Specify File Size for lossy format encoding, like JPEG
 static NSString * kSDCGImageDestinationRequestedFileSize = @"kCGImageDestinationRequestedFileSize";
 
@@ -237,23 +235,24 @@ static CGImageRef __nullable SDCGImageCreateCopy(CGImageRef cg_nullable image) {
     }
     CGImageRef imageRef;
     BOOL createFullImage = thumbnailSize.width == 0 || thumbnailSize.height == 0 || pixelWidth == 0 || pixelHeight == 0 || (pixelWidth <= thumbnailSize.width && pixelHeight <= thumbnailSize.height);
+    createFullImage = NO;
     if (createFullImage) {
         imageRef = CGImageSourceCreateImageAtIndex(source, index, (__bridge CFDictionaryRef)[decodingOptions copy]);
     } else {
         decodingOptions[(__bridge NSString *)kCGImageSourceCreateThumbnailWithTransform] = @(preserveAspectRatio);
-        CGFloat maxPixelSize;
-        if (preserveAspectRatio) {
-            CGFloat pixelRatio = pixelWidth / pixelHeight;
-            CGFloat thumbnailRatio = thumbnailSize.width / thumbnailSize.height;
-            if (pixelRatio > thumbnailRatio) {
-                maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.width / pixelRatio);
-            } else {
-                maxPixelSize = MAX(thumbnailSize.height, thumbnailSize.height * pixelRatio);
-            }
-        } else {
-            maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.height);
-        }
-        decodingOptions[(__bridge NSString *)kCGImageSourceThumbnailMaxPixelSize] = @(maxPixelSize);
+//        CGFloat maxPixelSize;
+//        if (preserveAspectRatio) {
+//            CGFloat pixelRatio = pixelWidth / pixelHeight;
+//            CGFloat thumbnailRatio = thumbnailSize.width / thumbnailSize.height;
+//            if (pixelRatio > thumbnailRatio) {
+//                maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.width / pixelRatio);
+//            } else {
+//                maxPixelSize = MAX(thumbnailSize.height, thumbnailSize.height * pixelRatio);
+//            }
+//        } else {
+//            maxPixelSize = MAX(thumbnailSize.width, thumbnailSize.height);
+//        }
+//        decodingOptions[(__bridge NSString *)kCGImageSourceThumbnailMaxPixelSize] = @(maxPixelSize);
         decodingOptions[(__bridge NSString *)kCGImageSourceCreateThumbnailFromImageAlways] = @(YES);
         imageRef = CGImageSourceCreateThumbnailAtIndex(source, index, (__bridge CFDictionaryRef)[decodingOptions copy]);
     }

@@ -59,27 +59,27 @@
         [SDWebImageDownloader sharedDownloader].config.executionOrder = SDWebImageDownloaderLIFOExecutionOrder;
         
         self.objects = [NSMutableArray arrayWithObjects:
-                    @"http://www.httpwatch.com/httpgallery/authentication/authenticatedimage/default.aspx?0.35786508303135633",     // requires HTTP auth, used to demo the NTLM auth
-                    @"http://assets.sbnation.com/assets/2512203/dogflops.gif",
-                    @"https://raw.githubusercontent.com/liyong03/YLGIFImage/master/YLGIFImageDemo/YLGIFImageDemo/joy.gif",
-                    @"http://apng.onevcat.com/assets/elephant.png",
-                    @"http://www.ioncannon.net/wp-content/uploads/2011/06/test2.webp",
-                    @"http://www.ioncannon.net/wp-content/uploads/2011/06/test9.webp",
-                    @"http://littlesvr.ca/apng/images/SteamEngine.webp",
-                    @"http://littlesvr.ca/apng/images/world-cup-2014-42.webp",
-                    @"https://isparta.github.io/compare-webp/image/gif_webp/webp/2.webp",
-                    @"https://nokiatech.github.io/heif/content/images/ski_jump_1440x960.heic",
-                    @"https://nokiatech.github.io/heif/content/image_sequences/starfield_animation.heic",
-                    @"https://s2.ax1x.com/2019/11/01/KHYIgJ.gif",
+//                    @"http://www.httpwatch.com/httpgallery/authentication/authenticatedimage/default.aspx?0.35786508303135633",     // requires HTTP auth, used to demo the NTLM auth
+//                    @"http://assets.sbnation.com/assets/2512203/dogflops.gif",
+//                    @"https://raw.githubusercontent.com/liyong03/YLGIFImage/master/YLGIFImageDemo/YLGIFImageDemo/joy.gif",
+//                    @"http://apng.onevcat.com/assets/elephant.png",
+//                    @"http://www.ioncannon.net/wp-content/uploads/2011/06/test2.webp",
+//                    @"http://www.ioncannon.net/wp-content/uploads/2011/06/test9.webp",
+//                    @"http://littlesvr.ca/apng/images/SteamEngine.webp",
+//                    @"http://littlesvr.ca/apng/images/world-cup-2014-42.webp",
+//                    @"https://isparta.github.io/compare-webp/image/gif_webp/webp/2.webp",
+//                    @"https://nokiatech.github.io/heif/content/images/ski_jump_1440x960.heic",
+//                    @"https://nokiatech.github.io/heif/content/image_sequences/starfield_animation.heic",
+//                    @"https://s2.ax1x.com/2019/11/01/KHYIgJ.gif",
                     @"https://raw.githubusercontent.com/icons8/flat-color-icons/master/pdf/stack_of_photos.pdf",
-                    @"https://nr-platform.s3.amazonaws.com/uploads/platform/published_extension/branding_icon/275/AmazonS3.png",
-                    @"https://res.cloudinary.com/dwpjzbyux/raw/upload/v1666474070/RawDemo/raw_vebed5.NEF",
-                    @"http://via.placeholder.com/200x200.jpg",
+//                    @"https://nr-platform.s3.amazonaws.com/uploads/platform/published_extension/branding_icon/275/AmazonS3.png",
+//                    @"https://res.cloudinary.com/dwpjzbyux/raw/upload/v1666474070/RawDemo/raw_vebed5.NEF",
+//                    @"http://via.placeholder.com/200x200.jpg",
                     nil];
 
         for (int i=1; i<25; i++) {
             // From http://r0k.us/graphics/kodak/, 768x512 resolution, 24 bit depth PNG
-            [self.objects addObject:[NSString stringWithFormat:@"http://r0k.us/graphics/kodak/kodak/kodim%02d.png", i]];
+//            [self.objects addObject:[NSString stringWithFormat:@"http://r0k.us/graphics/kodak/kodak/kodim%02d.png", i]];
         }
     }
     return self;

@@ -52,7 +52,7 @@
  *
  * @param url The url for the image.
  */
-- (void)sd_setImageWithURL:(nullable NSURL *)url NS_REFINED_FOR_SWIFT;
+- (void)sd_setImageWithURL:(nullable NSURL *)url SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url` and a placeholder.
@@ -64,7 +64,7 @@
  * @see sd_setImageWithURL:placeholderImage:options:
  */
 - (void)sd_setImageWithURL:(nullable NSURL *)url
-          placeholderImage:(nullable UIImage *)placeholder NS_REFINED_FOR_SWIFT;
+          placeholderImage:(nullable UIImage *)placeholder SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url`, placeholder and custom options.
@@ -77,7 +77,7 @@
  */
 - (void)sd_setImageWithURL:(nullable NSURL *)url
           placeholderImage:(nullable UIImage *)placeholder
-                   options:(SDWebImageOptions)options NS_REFINED_FOR_SWIFT;
+                   options:(SDWebImageOptions)options SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url`, placeholder, custom options and context.
@@ -92,7 +92,7 @@
 - (void)sd_setImageWithURL:(nullable NSURL *)url
           placeholderImage:(nullable UIImage *)placeholder
                    options:(SDWebImageOptions)options
-                   context:(nullable SDWebImageContext *)context;
+                   context:(nullable SDWebImageContext *)context SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url`.
@@ -107,7 +107,7 @@
  *                       The fourth parameter is the original image url.
  */
 - (void)sd_setImageWithURL:(nullable NSURL *)url
-                 completed:(nullable SDExternalCompletionBlock)completedBlock;
+                 completed:(nullable SDExternalCompletionBlock)completedBlock SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url`, placeholder.
@@ -124,7 +124,7 @@
  */
 - (void)sd_setImageWithURL:(nullable NSURL *)url
           placeholderImage:(nullable UIImage *)placeholder
-                 completed:(nullable SDExternalCompletionBlock)completedBlock NS_REFINED_FOR_SWIFT;
+                 completed:(nullable SDExternalCompletionBlock)completedBlock SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url`, placeholder and custom options.
@@ -143,7 +143,7 @@
 - (void)sd_setImageWithURL:(nullable NSURL *)url
           placeholderImage:(nullable UIImage *)placeholder
                    options:(SDWebImageOptions)options
-                 completed:(nullable SDExternalCompletionBlock)completedBlock;
+                 completed:(nullable SDExternalCompletionBlock)completedBlock SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url`, placeholder and custom options.
@@ -165,7 +165,7 @@
           placeholderImage:(nullable UIImage *)placeholder
                    options:(SDWebImageOptions)options
                   progress:(nullable SDImageLoaderProgressBlock)progressBlock
-                 completed:(nullable SDExternalCompletionBlock)completedBlock;
+                 completed:(nullable SDExternalCompletionBlock)completedBlock SD_REFINED_FOR_SWIFT;
 
 /**
  * Set the imageView `image` with an `url`, placeholder, custom options and context.
@@ -189,6 +189,6 @@
                    options:(SDWebImageOptions)options
                    context:(nullable SDWebImageContext *)context
                   progress:(nullable SDImageLoaderProgressBlock)progressBlock
-                 completed:(nullable SDExternalCompletionBlock)completedBlock;
+                 completed:(nullable SDExternalCompletionBlock)completedBlock SD_REFINED_FOR_SWIFT;
 
 @end

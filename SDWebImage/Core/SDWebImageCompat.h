@@ -77,6 +77,12 @@
     #endif
 #endif
 
+#if 1
+#define SD_REFINED_FOR_SWIFT NS_REFINED_FOR_SWIFT
+#else
+#define SD_REFINED_FOR_SWIFT
+#endif
+
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif

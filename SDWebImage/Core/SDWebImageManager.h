@@ -181,7 +181,7 @@ SDWebImageManager *manager = [SDWebImageManager sharedManager];
  }];
  @endcode
  */
-@property (nonatomic, strong, nullable) id<SDWebImageOptionsProcessor> optionsProcessor;
+@property (nonatomic, strong, nullable) id<SDWebImageOptionsProcessor> optionsProcessor SD_REFINED_FOR_SWIFT;
 
 /**
  * Check one or more operations running

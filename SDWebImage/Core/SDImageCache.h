@@ -435,9 +435,9 @@ typedef NS_OPTIONS(NSUInteger, SDImageCacheOptions) {
 
 /**
  * Asynchronously clear all disk cached images. Non-blocking method - returns immediately.
- * @param completion    A block that should be executed after cache expiration completes (optional)
+ * @param completionBlock   A block that should be executed after cache expiration completes (optional)
  */
-- (void)clearDiskOnCompletion:(nullable SDWebImageNoParamsBlock)completion;
+- (void)clearDiskWithCompletionBlock:(nullable SDWebImageNoParamsBlock)completionBlock;
 
 /**
  * Asynchronously remove all expired cached image from disk. Non-blocking method - returns immediately.

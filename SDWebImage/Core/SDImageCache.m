@@ -776,12 +776,12 @@ static NSString * _defaultDiskCacheDirectory;
     [self.memoryCache removeAllObjects];
 }
 
-- (void)clearDiskOnCompletion:(nullable SDWebImageNoParamsBlock)completion {
+- (void)clearDiskWithCompletionBlock:(SDWebImageNoParamsBlock)completionBlock {
     dispatch_async(self.ioQueue, ^{
         [self.diskCache removeAllData];
-        if (completion) {
+        if (completionBlock) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                completion();
+                completionBlock();
             });
         }
     });
@@ -999,12 +999,12 @@ static NSString * _defaultDiskCacheDirectory;
         }
             break;
         case SDImageCacheTypeDisk: {
-            [self clearDiskOnCompletion:completionBlock];
+            [self clearDiskWithCompletionBlock:completionBlock];
         }
             break;
         case SDImageCacheTypeAll: {
             [self clearMemory];
-            [self clearDiskOnCompletion:completionBlock];
+            [self clearDiskWithCompletionBlock:completionBlock];
         }
             break;
         default: {

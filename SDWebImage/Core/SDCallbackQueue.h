@@ -19,6 +19,9 @@ typedef NS_ENUM(NSUInteger, SDCallbackPolicy) {
     SDCallbackPolicyInvoke = 2
 };
 
+/// Utils method to create `dispatch_queue_attr_t`, used for Swift user because Swift does not bridge `DispatchQueue.Attributes` and `DispatchQos`
+extern dispatch_queue_attr_t _Nonnull SDCreateDispatchQueueAttributes(BOOL concurrent, dispatch_qos_class_t qosClass, int relativePriority, dispatch_autorelease_frequency_t autoreleaseFrequency);
+
 /// SDCallbackQueue is a wrapper used to control how the completionBlock should perform on queues, used by our `Cache`/`Manager`/`Loader`.
 /// Useful when you call SDWebImage in non-main queue and want to avoid it callback into main queue, which may cause issue.
 @interface SDCallbackQueue : NSObject

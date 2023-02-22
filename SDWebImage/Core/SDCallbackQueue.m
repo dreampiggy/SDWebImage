@@ -20,6 +20,13 @@ static void SDReleaseBlock(void *context) {
     CFRelease(context);
 }
 
+dispatch_queue_attr_t _Nonnull SDCreateDispatchQueueAttributes(BOOL concurrent, dispatch_qos_class_t qosClass, int relativePriority, dispatch_autorelease_frequency_t autoreleaseFrequency) {
+   dispatch_queue_attr_t attr = concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
+   attr = dispatch_queue_attr_make_with_qos_class(attr, qosClass, relativePriority);
+   attr = dispatch_queue_attr_make_with_autorelease_frequency(attr, autoreleaseFrequency);
+   return attr;
+}
+
 static void inline SDSafeExecute(dispatch_queue_t _Nonnull queue, dispatch_block_t _Nonnull block, BOOL async) {
     // Special handle for main queue label only (custom queue can have the same label)
     const char *label = dispatch_queue_get_label(queue);

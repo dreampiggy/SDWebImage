@@ -18,8 +18,8 @@ extension SDWebImageManager {
                 var result: Result<LoadImageResult, Error>
                 if let error = error {
                     result = .failure(error)
-                } else if let image = image {
-                    let imageResult = LoadImageResult(image: image, data: data, extendedObject: image.sd_extendedObject)
+                } else if let image = image, let url = url {
+                    let imageResult = LoadImageResult(image: image, data: data, cacheType: cacheType, url: url)
                     result = .success(imageResult)
                 } else {
                     result = .failure(NSError())

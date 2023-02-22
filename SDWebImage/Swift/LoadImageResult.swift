@@ -8,7 +8,8 @@
 import Foundation
 
 public struct LoadImageResult {
+    public var url: URL
     public var image: PlatformImage
     public var data: Data?
-    public var extendedObject: (NSObjectProtocol & NSCoding)?
+    public var cacheType: SDImageCacheType
 }

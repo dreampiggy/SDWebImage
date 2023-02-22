@@ -7,6 +7,7 @@
  */
 
 import Foundation
+@_exported import SDWebImageObjc
 
 /// Wrapper for SDWebImage compatible types. This type provides an extension point for
 /// connivence methods in SDWebImage.

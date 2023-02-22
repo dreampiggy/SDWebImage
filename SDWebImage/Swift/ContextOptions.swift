@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SDWebImageObjc
+@_exported import SDWebImageObjc
 
 public enum ContextOption {
     case retryFailed

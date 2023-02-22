@@ -10,7 +10,7 @@ import Foundation
 
 public enum ContextOption {
     case retryFailed
-    case storeCache(SDImageCache)
+    case storeCache(ImageCache)
 }
 public typealias ContextOptions = [ContextOption]
 
@@ -35,7 +35,7 @@ extension ContextOptions {
         }
         source.context?.forEach { key, value in
             switch key {
-            case .storeCacheType: result.append(.storeCache(value as! SDImageCache))
+            case .storeCacheType: result.append(.storeCache(value as! ImageCache))
             default:
                 fatalError("TODO")
             }

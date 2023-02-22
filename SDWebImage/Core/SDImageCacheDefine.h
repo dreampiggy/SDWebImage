@@ -13,7 +13,7 @@
 #import "SDImageCoder.h"
 
 /// Image Cache Type
-typedef NS_ENUM(NSInteger, SDImageCacheType) {
+typedef NS_OPTIONS(NSInteger, SDImageCacheType) {
     /**
      * For query and contains op in response, means the image isn't available in the image cache
      * For op in request, this type is not available and take no effect.
@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, SDImageCacheType) {
      * For op in request, means process both memory cache and disk cache.
      */
     SDImageCacheTypeAll
-};
+} NS_SWIFT_NAME(ImageCacheType);
 
 typedef void(^SDImageCacheCheckCompletionBlock)(BOOL isInCache);
 typedef void(^SDImageCacheQueryDataCompletionBlock)(NSData * _Nullable data);
@@ -72,6 +72,7 @@ FOUNDATION_EXPORT void SDSetDecodeOptionsToContext(SDWebImageMutableContext * _N
  Though the best practice to custom image cache, is to write your own class which conform `SDMemoryCache` or `SDDiskCache` protocol for `SDImageCache` class (See more on `SDImageCacheConfig.memoryCacheClass & SDImageCacheConfig.diskCacheClass`).
  However, if your own cache implementation contains more advanced feature beyond `SDImageCache` itself, you can consider to provide this instead. For example, you can even use a cache manager like `SDImageCachesManager` to register multiple caches.
  */
+NS_SWIFT_NAME(ImageCacheProtocol)
 @protocol SDImageCache <NSObject>
 
 @required

@@ -53,11 +53,12 @@ typedef NS_OPTIONS(NSUInteger, SDImageCacheOptions) {
      * Note this options is not compatible with `SDImageCacheDecodeFirstFrameOnly`, which always produce a UIImage/NSImage.
      */
     SDImageCacheMatchAnimatedImageClass = 1 << 7,
-};
+} NS_REFINED_FOR_SWIFT;
 
 /**
  *  A token associated with each cache query. Can be used to cancel a cache query
  */
+NS_SWIFT_NAME(ImageCache.Token)
 @interface SDImageCacheToken : NSObject <SDWebImageOperation>
 
 /**
@@ -76,6 +77,7 @@ typedef NS_OPTIONS(NSUInteger, SDImageCacheOptions) {
  * SDImageCache maintains a memory cache and a disk cache. Disk cache write operations are performed
  * asynchronous so it doesn’t add unnecessary latency to the UI.
  */
+NS_SWIFT_NAME(ImageCache)
 @interface SDImageCache : NSObject
 
 #pragma mark - Properties

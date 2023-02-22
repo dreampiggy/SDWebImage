@@ -27,12 +27,13 @@ typedef NS_ENUM(NSUInteger, SDImageCacheConfigExpireType) {
      * When the image cache is created, modified, renamed, file attribute updated (like permission, xattr)  it will update this value
      */
     SDImageCacheConfigExpireTypeChangeDate,
-};
+} NS_SWIFT_NAME(ImageCache.ExpireType);
 
 /**
  The class contains all the config for image cache
  @note This class conform to NSCopying, make sure to add the property in `copyWithZone:` as well.
  */
+NS_SWIFT_NAME(ImageCache.Config)
 @interface SDImageCacheConfig : NSObject <NSCopying>
 
 /**
@@ -134,7 +135,7 @@ typedef NS_ENUM(NSUInteger, SDImageCacheConfigExpireType) {
  * @warning **MAKE SURE** to keep `diskCacheWritingOptions` to use `NSDataWritingAtomic`, or concurrent queue may cause corrupted disk data (because multiple threads read/write same file without atomic is not IO-safe).
  * @note This value does not support dynamic changes. Which means further modification on this value after cache initialized has no effect.
  */
-@property (strong, nonatomic, nullable) dispatch_queue_attr_t ioQueueAttributes;
+@property (strong, nonatomic, nullable) dispatch_queue_attr_t ioQueueAttributes NS_REFINED_FOR_SWIFT;
 
 /**
  * The custom memory cache class. Provided class instance must conform to `SDMemoryCache` protocol to allow usage.

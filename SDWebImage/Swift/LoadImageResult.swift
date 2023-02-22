@@ -10,6 +10,6 @@ import Foundation
 public struct LoadImageResult {
     public var image: PlatformImage
     public var data: Data?
-    public var cacheType: SDImageCacheType
+    public var cacheType: ImageCacheType
     public var url: URL
 }

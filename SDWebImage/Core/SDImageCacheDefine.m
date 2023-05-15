@@ -35,7 +35,10 @@ SDImageCoderOptions * _Nonnull SDGetDecodeOptionsFromContext(SDWebImageContext *
     if (!typeIdentifierHint) {
         // UTI has high priority
         fileExtensionHint = cacheKey.pathExtension; // without dot
-        if (fileExtensionHint.length == 0) {
+        NSUInteger length = fileExtensionHint.length;
+        // HACK: UTI need XPC and may be slow, and has possible bug in lower firmware
+        // limit only check image file extension between 2-5 length enough
+        if (length || length > 5 || length < 2) {
             // Ignore file extension which is empty
             fileExtensionHint = nil;
         }

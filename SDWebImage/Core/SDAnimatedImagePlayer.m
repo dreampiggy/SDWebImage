@@ -13,12 +13,62 @@
 #import "SDImageFramePool.h"
 #import "SDInternalMacros.h"
 
+/// shared player map with lock
+SD_LOCK_DECLARE_STATIC(_playerMapLock);
+static NSMapTable<NSString *, SDAnimatedImagePlayer *> *playerMap;
+
+@interface SDAnimatedImagePlayer ()
+
+- (void)seekToFrameAtIndex:(NSUInteger)index loopCount:(NSUInteger)loopCount mode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator;
+- (void)startPlayingWithMode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator;
+- (void)pausePlayingWithMode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator;
+- (void)stopPlayingWithMode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator;
+
+@end
+
+@interface SDAnimatedImagePlayerCoordinator ()
+
+@property (nonatomic, weak, readwrite) SDAnimatedImagePlayer *player;
+@property (nonatomic, readwrite) NSUInteger currentFrameIndex;
+@property (nonatomic, readwrite) NSUInteger currentLoopCount;
+@property (nonatomic, readwrite, getter=isPlaying) BOOL playing;
+
+@end
+
+@implementation SDAnimatedImagePlayerCoordinator
+
+- (instancetype)initWithGroup:(NSString *)group {
+    self = [super init];
+    if (self) {
+        _group = [group copy];
+    }
+    return self;
+}
+
+- (void)seekToFrameAtIndex:(NSUInteger)index loopCount:(NSUInteger)loopCount mode:(SDAnimatedImageSynchronizationMode)mode {
+    [self.player seekToFrameAtIndex:index loopCount:loopCount mode:mode coordinator:self];
+}
+
+- (void)startPlayingWithMode:(SDAnimatedImageSynchronizationMode)mode {
+    [self.player startPlayingWithMode:mode coordinator:self];
+}
+
+- (void)pausePlayingWithMode:(SDAnimatedImageSynchronizationMode)mode {
+    [self.player pausePlayingWithMode:mode coordinator:self];
+}
+
+- (void)stopPlayingWithMode:(SDAnimatedImageSynchronizationMode)mode {
+    [self.player stopPlayingWithMode:mode coordinator:self];
+}
+
+@end
+
 @interface SDAnimatedImagePlayer () {
     NSRunLoopMode _runLoopMode;
 }
 
 @property (nonatomic, strong) SDImageFramePool *framePool;
-
+@property (nonatomic, readwrite, getter=isPlaying) BOOL playing;
 @property (nonatomic, strong, readwrite) UIImage *currentFrame;
 @property (nonatomic, assign, readwrite) NSUInteger currentFrameIndex;
 @property (nonatomic, assign, readwrite) NSUInteger currentLoopCount;
@@ -29,6 +79,10 @@
 @property (nonatomic, assign) BOOL needsDisplayWhenImageBecomesAvailable;
 @property (nonatomic, assign) BOOL shouldReverse;
 @property (nonatomic, strong) SDDisplayLink *displayLink;
+// Typically, UIKit class `setImage:` accessor is on main queue, so we don't lock
+@property (nonatomic, strong) NSMutableArray<SDAnimatedImageFrameHandler> *frameHandlers;
+@property (nonatomic, strong) NSMutableArray<SDAnimatedImageLoopHandler> *loopHandlers;
+@property (nonatomic, strong) NSMutableArray<SDAnimatedImagePlayerCoordinator *> *coordinators;
 
 @end
 
@@ -42,12 +96,14 @@
         if (animatedImageFrameCount <= 1) {
             return nil;
         }
-        self.totalFrameCount = animatedImageFrameCount;
+        _totalFrameCount = animatedImageFrameCount;
         // Get the current frame and loop count.
-        self.totalLoopCount = provider.animatedImageLoopCount;
-        self.animatedProvider = provider;
-        self.playbackRate = 1.0;
-        self.framePool = [SDImageFramePool registerProvider:provider];
+        _totalLoopCount = provider.animatedImageLoopCount;
+        _animatedProvider = provider;
+        _playbackRate = 1.0;
+        _frameHandlers = [NSMutableArray arrayWithCapacity:1];
+        _loopHandlers = [NSMutableArray arrayWithCapacity:1];
+        _framePool = [SDImageFramePool registerProvider:provider];
     }
     return self;
 }
@@ -57,9 +113,70 @@
     return player;
 }
 
++ (void)initialize {
+    SD_LOCK_DECLARE_STATIC(_playerMapLock);
+    playerMap = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];
+}
+
++ (instancetype)sharedPlayerWithProvider:(id<SDAnimatedImageProvider>)provider coordinator:(nonnull SDAnimatedImagePlayerCoordinator *)coordinator {
+    if (!coordinator) {
+        return nil;
+    }
+    // Using ${object address}-${tag} as unique key
+    NSString *key = [NSString stringWithFormat:@"%p-%@", provider, coordinator.group];
+    SD_LOCK(_playerMapLock);
+    SDAnimatedImagePlayer *player = [playerMap objectForKey:key];
+    if (!player) {
+        player = [[SDAnimatedImagePlayer alloc] initWithProvider:provider];
+        if (!player) {
+            SD_UNLOCK(_playerMapLock);
+            return nil;
+        }
+        [playerMap setObject:player forKey:key];
+        NSLog(@"create new player: %p for key: %@", player, key);
+    } else {
+        NSLog(@"share player: %p for key: %@", player, key);
+    }
+    SD_UNLOCK(_playerMapLock);
+    coordinator.player = player;
+    [player addCoordinator:coordinator];
+    return player;
+}
+
 - (void)dealloc {
     // Dereference the frame pool, when zero the frame pool for provider will dealloc
     [SDImageFramePool unregisterProvider:self.animatedProvider];
+}
+
+#pragma mark - Delegate
+
+- (void)addCoordinator:(nonnull SDAnimatedImagePlayerCoordinator *)coordinator {
+    [self.coordinators addObject:coordinator];
+}
+
+- (void)addAnimationFrameHandler:(void (^)(NSUInteger, UIImage * _Nonnull))handler {
+    [self.frameHandlers addObject:handler];
+}
+
+- (void)addAnimationLoopHandler:(void (^)(NSUInteger))handler {
+    [self.loopHandlers addObject:handler];
+}
+
+// Deprecated
+- (void)setAnimationFrameHandler:(SDAnimatedImageFrameHandler)animationFrameHandler {
+    [self.frameHandlers addObject:animationFrameHandler];
+}
+
+- (SDAnimatedImageFrameHandler)animationFrameHandler {
+    return self.frameHandlers.lastObject;
+}
+
+- (void)setAnimationLoopHandler:(SDAnimatedImageLoopHandler)animationLoopHandler {
+    [self.loopHandlers addObject:animationLoopHandler];
+}
+
+- (SDAnimatedImageLoopHandler)animationLoopHandler {
+    return self.loopHandlers.lastObject;
 }
 
 #pragma mark - Private
@@ -140,8 +257,19 @@
 }
 
 #pragma mark - Animation Control
+
+- (void)setPlaying:(BOOL)playing {
+    if (_playing == playing) {
+        return;
+    }
+    [self willChangeValueForKey:@"isPlaying"];
+    _playing = playing;
+    [self didChangeValueForKey:@"isPlaying"];
+}
+
 - (void)startPlaying {
     [self.displayLink start];
+    self.playing = YES;
     // Setup frame
     [self setupCurrentFrame];
 }
@@ -149,16 +277,14 @@
 - (void)stopPlaying {
     // Using `_displayLink` here because when UIImageView dealloc, it may trigger `[self stopAnimating]`, we already release the display link in SDAnimatedImageView's dealloc method.
     [_displayLink stop];
+    self.playing = NO;
     // We need to reset the frame status, but not trigger any handle. This can ensure next time's playing status correct.
     [self resetCurrentFrameStatus];
 }
 
 - (void)pausePlaying {
     [_displayLink stop];
-}
-
-- (BOOL)isPlaying {
-    return _displayLink.isRunning;
+    self.playing = NO;
 }
 
 - (void)seekToFrameAtIndex:(NSUInteger)index loopCount:(NSUInteger)loopCount {
@@ -169,6 +295,74 @@
     self.currentLoopCount = loopCount;
     self.currentFrame = [self.animatedProvider animatedImageFrameAtIndex:index];
     [self handleFrameChange];
+}
+
+#pragma mark - Group play
+- (void)seekToFrameAtIndex:(NSUInteger)index loopCount:(NSUInteger)loopCount mode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator {
+    if (mode == SDAnimatedImageSynchronizationModeNone) {
+        coordinator.currentFrameIndex = index;
+        coordinator.currentLoopCount = loopCount;
+    } else if (mode == SDAnimatedImageSynchronizationModeAll) {
+        [self seekToFrameAtIndex:index loopCount:loopCount];
+    } else if (mode == SDAnimatedImageSynchronizationModeLast) {
+        for (SDAnimatedImagePlayerCoordinator *otherCoordinator in coordinator.player.coordinators) {
+            if (otherCoordinator == coordinator) continue;
+        }
+    }
+}
+
+- (void)startPlayingWithMode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator  {
+    coordinator.playing = YES;
+    if (mode == SDAnimatedImageSynchronizationModeNone) {
+        return;
+    } else if (mode == SDAnimatedImageSynchronizationModeAll) {
+        [self startPlaying];
+    } else if (mode == SDAnimatedImageSynchronizationModeLast) {
+        BOOL continueAction = NO;
+        for (SDAnimatedImagePlayerCoordinator *otherCoordinator in coordinator.player.coordinators) {
+            if (otherCoordinator == coordinator) continue;
+            continueAction |= (otherCoordinator.isPlaying == NO);
+        }
+        if (continueAction) {
+            [self startPlaying];
+        }
+    }
+}
+
+- (void)pausePlayingWithMode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator {
+    coordinator.playing = NO;
+    if (mode == SDAnimatedImageSynchronizationModeNone) {
+        return;
+    } else if (mode == SDAnimatedImageSynchronizationModeAll) {
+        [self pausePlaying];
+    } else if (mode == SDAnimatedImageSynchronizationModeLast) {
+        BOOL continueAction = NO;
+        for (SDAnimatedImagePlayerCoordinator *otherCoordinator in coordinator.player.coordinators) {
+            if (otherCoordinator == coordinator) continue;
+            continueAction |= (otherCoordinator.isPlaying == NO);
+        }
+        if (continueAction) {
+            [self pausePlaying];
+        }
+    }
+}
+
+- (void)stopPlayingWithMode:(SDAnimatedImageSynchronizationMode)mode coordinator:(SDAnimatedImagePlayerCoordinator *)coordinator  {
+    coordinator.playing = NO;
+    if (mode == SDAnimatedImageSynchronizationModeNone) {
+        return;
+    } else if (mode == SDAnimatedImageSynchronizationModeAll) {
+        [self stopPlaying];
+    } else if (mode == SDAnimatedImageSynchronizationModeLast) {
+        BOOL continueAction = NO;
+        for (SDAnimatedImagePlayerCoordinator *otherCoordinator in coordinator.player.coordinators) {
+            if (otherCoordinator == coordinator) continue;
+            continueAction |= (otherCoordinator.isPlaying == NO);
+        }
+        if (continueAction) {
+            [self stopPlaying];
+        }
+    }
 }
 
 #pragma mark - Core Render
@@ -304,14 +498,16 @@
 }
 
 - (void)handleFrameChange {
-    if (self.animationFrameHandler) {
-        self.animationFrameHandler(self.currentFrameIndex, self.currentFrame);
+    NSArray<SDAnimatedImageFrameHandler> *frameHandler = self.frameHandlers;
+    for (SDAnimatedImageFrameHandler handler in frameHandler) {
+        handler(self.currentFrameIndex, self.currentFrame);
     }
 }
 
 - (void)handleLoopChange {
-    if (self.animationLoopHandler) {
-        self.animationLoopHandler(self.currentLoopCount);
+    NSArray<SDAnimatedImageLoopHandler> *loopHandlers = self.loopHandlers;
+    for (SDAnimatedImageLoopHandler handler in loopHandlers) {
+        handler(self.currentLoopCount);
     }
 }
 

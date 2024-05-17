@@ -27,6 +27,7 @@
 }
 
 @property (nonatomic, strong, readwrite) SDAnimatedImagePlayer *player;
+@property (nonatomic, strong, readwrite) SDAnimatedImagePlayerCoordinator *coordinator;
 @property (nonatomic, strong, readwrite) UIImage *currentFrame;
 @property (nonatomic, assign, readwrite) NSUInteger currentFrameIndex;
 @property (nonatomic, assign, readwrite) NSUInteger currentLoopCount;
@@ -121,6 +122,7 @@
     
     if (!self.isProgressive) {
         // Stop animating
+        self.coordinator = nil;
         self.player = nil;
         self.currentFrame = nil;
         self.currentFrameIndex = 0;
@@ -139,7 +141,14 @@
                 provider = (id<SDAnimatedImage>)image;
             }
             // Create animated player
-            self.player = [SDAnimatedImagePlayer playerWithProvider:provider];
+            if (self.animationGroup) {
+                // shared animation status
+                self.coordinator = [[SDAnimatedImagePlayerCoordinator alloc] initWithGroup:self.animationGroup];
+                self.player = [SDAnimatedImagePlayer sharedPlayerWithProvider:provider coordinator:self.coordinator];
+            } else {
+                // standalone animation status
+                self.player = [SDAnimatedImagePlayer playerWithProvider:provider];
+            }
         } else {
             // Update Frame Count
             self.player.totalFrameCount = [(id<SDAnimatedImage>)image animatedImageFrameCount];
@@ -169,29 +178,41 @@
 
         // Setup handler
         @weakify(self);
-        self.player.animationFrameHandler = ^(NSUInteger index, UIImage * frame) {
+        [self.player addAnimationFrameHandler:^(NSUInteger index, UIImage * frame) {
             @strongify(self);
+            if (!self.shouldAnimate) {
+                return;
+            }
             self.currentFrameIndex = index;
             self.currentFrame = frame;
             [self.imageViewLayer setNeedsDisplay];
-        };
-        self.player.animationLoopHandler = ^(NSUInteger loopCount) {
+        }];
+        [self.player addAnimationLoopHandler:^(NSUInteger loopCount) {
             @strongify(self);
+            if (!self.shouldAnimate) {
+                return;
+            }
             // Progressive image reach the current last frame index. Keep the state and pause animating. Wait for later restart
             if (self.isProgressive) {
                 NSUInteger lastFrameIndex = self.player.totalFrameCount - 1;
-                [self.player seekToFrameAtIndex:lastFrameIndex loopCount:0];
-                [self.player pausePlaying];
+                if (self.coordinator) {
+                    // Prorgessive need to sync to all
+                    [self.coordinator seekToFrameAtIndex:lastFrameIndex loopCount:0 mode:SDAnimatedImageSynchronizationModeAll];
+                    [self.coordinator pausePlayingWithMode:SDAnimatedImageSynchronizationModeAll];
+                } else {
+                    [self.player seekToFrameAtIndex:lastFrameIndex loopCount:0];
+                    [self.player pausePlaying];
+                }
             } else {
                 self.currentLoopCount = loopCount;
             }
-        };
+        }];
         
         // Ensure disabled highlighting; it's not supported (see `-setHighlighted:`).
         super.highlighted = NO;
-        
-        [self stopAnimating];
-        [self checkPlay];
+        if (self.autoPlayAnimatedImage) {
+            [self startAnimating];
+        }
     }
     [self.imageViewLayer setNeedsDisplay];
 }
@@ -322,6 +343,9 @@
 
 - (void)setAnimationRepeatCount:(NSInteger)animationRepeatCount
 {
+    if (self.animationRepeatCount == animationRepeatCount) {
+        return;
+    }
 #if SD_UIKIT
     [super setAnimationRepeatCount:animationRepeatCount];
 #else
@@ -338,7 +362,11 @@
     if (self.player) {
         [self updateShouldAnimate];
         if (self.shouldAnimate) {
-            [self.player startPlaying];
+            if (self.coordinator) {
+                [self.coordinator startPlayingWithMode:SDAnimatedImageSynchronizationModeAll];
+            } else {
+                [self.player startPlaying];
+            }
         }
     } else {
 #if SD_UIKIT
@@ -353,9 +381,17 @@
 {
     if (self.player) {
         if (self.resetFrameIndexWhenStopped) {
-            [self.player stopPlaying];
+            if (self.coordinator) {
+                [self.coordinator stopPlayingWithMode:SDAnimatedImageSynchronizationModeLast];
+            } else {
+                [self.player stopPlaying];
+            }
         } else {
-            [self.player pausePlaying];
+            if (self.coordinator) {
+                [self.coordinator pausePlayingWithMode:SDAnimatedImageSynchronizationModeLast];
+            } else {
+                [self.player pausePlaying];
+            }
         }
         if (self.clearBufferWhenStopped) {
             [self.player clearFrameBuffer];
@@ -421,9 +457,17 @@
     if (self.player && self.autoPlayAnimatedImage) {
         [self updateShouldAnimate];
         if (self.shouldAnimate) {
-            [self startAnimating];
+            if (self.coordinator) {
+                [self.coordinator startPlayingWithMode:SDAnimatedImageSynchronizationModeAll];
+            } else {
+                [self.player startPlaying];
+            }
         } else {
-            [self stopAnimating];
+            if (self.coordinator) {
+                [self.coordinator stopPlayingWithMode:SDAnimatedImageSynchronizationModeLast];
+            } else {
+                [self.player stopPlaying];
+            }
         }
     }
 }

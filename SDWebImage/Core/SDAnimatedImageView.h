@@ -21,6 +21,11 @@
  */
 @interface SDAnimatedImageView : UIImageView
 /**
+ When you want different image view instance to share the playback status like `frame index` / `loop count`, you can make them to use the same group. Create a group and set to this property, then the player will be shared instead of self-allocated.
+ */
+@property (nonatomic, strong, readwrite, nullable) NSString *animationGroup;
+
+/**
  The internal animation player.
  This property is only used for advanced usage, like inspecting/debugging animation status, control progressive loading, complicated animation frame index control, etc.
  @warning Pay attention if you directly update the player's property like `totalFrameCount`, `totalLoopCount`, the same property on `SDAnimatedImageView` may not get synced.
